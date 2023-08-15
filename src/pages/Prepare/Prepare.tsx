@@ -7,13 +7,7 @@ import { StyledButtonContainer, StyledRules, StyledPaper } from './Prepare.style
 
 import ImpLogo from 'components/ImpLogo';
 import NumberPicker from 'components/NumberPicker';
-
-const PICKERS_SETTINGS = [
-  {pattern: '[1-9]', fieldName: 'digitA'},
-  {pattern: '[0-9]', fieldName: 'digitB'},
-  {pattern: '[0-9]', fieldName: 'digitC'},
-  {pattern: '[0-9]', fieldName: 'digitD'}
-]
+import { PICKER } from 'constants/Settings';
 
 type FormValues = {
   digitA: string,
@@ -26,7 +20,7 @@ const Prepare: React.FC = () => {
   const methods = useForm<FormValues>({
     defaultValues: {digitA: '', digitB: '', digitC: '', digitD: ''}
   })
-  const { isValid } = methods.formState;
+  const {isValid} = methods.formState;
 
   const onSubmit = (data: FormValues) => console.log(data, Object.values(data).join(''));
 
@@ -34,8 +28,8 @@ const Prepare: React.FC = () => {
     <FormProvider {...methods}>
       <form onSubmit={methods.handleSubmit(onSubmit)}>
         <StyledPageContainer>
-          <ImpLogo/>
-          <Typography gutterBottom={true} variant="h2">Pick a number</Typography>
+          <ImpLogo />
+          <Typography gutterBottom={true} variant="h2">Pick your number</Typography>
 
           <StyledPaper elevation={10}>
             <StyledRules gutterBottom={true} variant="subtitle2">
@@ -45,7 +39,9 @@ const Prepare: React.FC = () => {
             </StyledRules>
           </StyledPaper>
 
-          <NumberPicker pickerSettings={PICKERS_SETTINGS}/>
+          <div style={{ width: '80%' }}>
+            <NumberPicker pickerSettings={PICKER}/>
+          </div>
 
           <StyledButtonContainer>
             <Button

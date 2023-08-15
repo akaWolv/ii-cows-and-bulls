@@ -2,8 +2,12 @@ import React from 'react'
 import logo from '../../indieimp.svg';
 import { StyledLogo } from './ImpLogo.styled';
 
-const ImpLogo: React.FC = () => {
-  return <StyledLogo src={logo} className="App-logo" alt="logo"/>
+type Props = {
+  size?: 'sm' | 'md'
+}
+
+const ImpLogo: React.FC<Props> = ({ size = 'md' }) => {
+  return <StyledLogo src={logo} className="App-logo" alt="logo" $size={size} />
 }
 
 export default ImpLogo

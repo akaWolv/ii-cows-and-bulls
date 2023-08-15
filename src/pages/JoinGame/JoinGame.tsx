@@ -28,10 +28,7 @@ const JoinGame: React.FC = () => {
         <center>Type in password given by friend:</center>
       </Typography>
 
-      <StyledInputContainer
-        component="form"
-        $isError={isConnectionError}
-      >
+      <StyledInputContainer $isError={isConnectionError}>
         <IconButton sx={{p: '10px'}}>
           <HttpsIcon/>
         </IconButton>

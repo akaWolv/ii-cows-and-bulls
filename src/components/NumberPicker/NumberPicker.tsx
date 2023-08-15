@@ -2,12 +2,13 @@ import React from 'react'
 import { useFormContext } from 'react-hook-form';
 import { StyledNumberPickerContainer } from './NumberPicker.styled';
 import SinglePicker from './SinglePicker';
+import { SettingsPicker } from 'constants/Settings.d';
 
-type NumberPicker = [
-  pickerSettings: { pattern: string, fieldName: string }[],
-]
+type Props = {
+  pickerSettings: SettingsPicker,
+}
 
-const NumberPicker: React.FC = ({ pickerSettings }: NumberPicker) => {
+const NumberPicker: React.FC<Props> = ({ pickerSettings }) => {
   const {setFocus} = useFormContext();
 
   return (

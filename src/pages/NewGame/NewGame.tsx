@@ -25,7 +25,7 @@ const NewGame: React.FC = () => {
         <Typography variant="h2">XYZ567</Typography>
       </StyledPaper>
       <Typography gutterBottom={true} variant="subtitle2">
-        Pass it to you oponent and wait...
+        Pass it to you Opponent and wait...
       </Typography>
       <StyledStatusContainer>
         {

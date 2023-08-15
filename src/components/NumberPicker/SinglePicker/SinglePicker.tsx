@@ -8,20 +8,20 @@ import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRound
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 
 interface SinglePicker {
-  pattern: string,
+  pattern: RegExp,
   fieldName: string,
   jumpPreviousField: () => void,
   jumpNextField: () => void
 }
 
-const SinglePicker: React.FC = ({pattern, fieldName, jumpPreviousField, jumpNextField}: SinglePicker) => {
+const SinglePicker: React.FC<SinglePicker> = ({pattern, fieldName, jumpPreviousField, jumpNextField}: SinglePicker) => {
   const {control, setValue, watch} = useFormContext();
 
   const increaseValue = () => {
-    setValue<string, string>(fieldName, String(_numberPicker(1)), { shouldValidate: true })
+    setValue(fieldName, String(_numberPicker(1)), {shouldValidate: true})
   }
   const decreaseValue = () => {
-    setValue<string, string>(fieldName, String(_numberPicker(-1)), { shouldValidate: true })
+    setValue(fieldName, String(_numberPicker(-1)), {shouldValidate: true})
   }
   const onDirectChange = (value: string) => {
     const newFieldValue = value.match(pattern) ? value : ''
@@ -36,30 +36,30 @@ const SinglePicker: React.FC = ({pattern, fieldName, jumpPreviousField, jumpNext
         // same number do not change
         // if value is set jump to next
         newValue.length > 0 && jumpNextField()
-        setValue<string, string>(fieldName, newValue, { shouldValidate: true })
+        setValue(fieldName, newValue, {shouldValidate: true})
         return
       }
 
       const availableNumbers = _getAvailableNumbers()
       if (!availableNumbers.includes(Number(newValue))) {
         // number is not available
-        setValue<string, string>(fieldName, '', { shouldValidate: true })
+        setValue(fieldName, '', {shouldValidate: true})
         return
       }
     }
     // if value is set jump to next
     newValue.length > 0 && jumpNextField()
-    setValue<string, string>(fieldName, newValue, { shouldValidate: true })
+    setValue(fieldName, newValue, {shouldValidate: true})
     return
   }
-  const onKeyDown = (e) => {
-    if (e.code === 'Backspace' && e.target.value.length === 0) {
+  const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+    if (event.code === 'Backspace' && (event.target as HTMLInputElement).value.length === 0) {
       jumpPreviousField()
     }
-    if (e.code === 'ArrowLeft') {
+    if (event.code === 'ArrowLeft') {
       jumpPreviousField()
     }
-    if (e.code === 'ArrowRight') {
+    if (event.code === 'ArrowRight') {
       jumpNextField()
     }
   }
@@ -98,28 +98,29 @@ const SinglePicker: React.FC = ({pattern, fieldName, jumpPreviousField, jumpNext
       <Controller
         name={fieldName}
         control={control}
-        rules={{ pattern, required: true }}
+        rules={{pattern, required: true}}
         render={({field: {ref, ...field}}) => (
           <TextField
             {...field}
             inputRef={ref}
-            onChange={(e) =>
-              onDirectChange(e.target.value) && field.onChange(e)
-            }
+            onChange={(e) => {
+              onDirectChange(e.target.value)
+              field.onChange(e)
+            }}
             onKeyDown={onKeyDown}
-            onBlur={() => { document.activeElement.blur() }}
+            onBlur={() => {
+              (document.activeElement as HTMLElement).blur()
+            }}
             size="small"
             type="text"
             inputProps={{
               inputMode: 'numeric',
-              pattern,
               style: {textAlign: 'center', fontSize: '2em'}
             }}
             style={{margin: '0.5em 0'}}
           />
         )}
-      >
-      </Controller>
+      />
       <IconButton aria-label="down" onClick={() => decreaseValue()}>
         <KeyboardArrowDownRoundedIcon sx={{fontSize: '1.5em'}}/>
       </IconButton>

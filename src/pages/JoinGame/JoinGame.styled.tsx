@@ -26,17 +26,16 @@ const StyledInputContainer = styled(Paper)<{
   margin: 1em;
   padding: 2px 4px !important; 
   display: flex;
-  alignItems: center;
+  align-items: center;
   width: 80%;
-  border-bottom: solid 2px transparent;
+  border-bottom: solid 4px transparent;
   ${({ $isError }) => $isError && `
-    // box-shadow: 0px 3px 10px red !important;
-    border-bottom: solid 2px red;
+    border-bottom: solid 4px ${Colors.IMP_RED_BAD};
   `};
 `
 
 const StyledFormHelperText = styled(FormHelperText)`
-  fontSize: 0.9em; 
+  font-size: 0.9em; 
   height: 25px;
 `
 
