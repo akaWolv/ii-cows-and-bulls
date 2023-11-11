@@ -1,5 +1,5 @@
 import styled from 'styled-components'
-import { CircularProgress, Paper, Typography } from '@mui/material';
+import { Button, CircularProgress, Paper, Typography } from '@mui/material';
 import Colors from 'constants/Colors';
 
 const StyledPaper = styled(Paper)`
@@ -17,22 +17,36 @@ const StyledCircularProgress = styled(CircularProgress)`
 `
 
 const StyledStatusContainer = styled.div`
-  padding: 1em;
+  text-align: center;
+  padding: 0;
   width: 100%;
   height: 180px;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: flex-start;
+  gap: 1.5em;
 `
 
 const StyledConnectedText = styled(Typography)`
   color: ${Colors.IMP_ORANGE};
+`
+const StyledCodeTypography = styled(Typography)`
+  font-family: "Roboto Mono",Monospace,serif !important;
+`
+const StyledNewGameCodeButton = styled(Button)`
+  color: ${Colors.IMP_ORANGE} !important;
+`
+const StyledInvalidCodeSpan = styled.span`
+  color: ${Colors.IMP_RED_BAD};
 `
 
 export {
   StyledPaper,
   StyledCircularProgress,
   StyledStatusContainer,
-  StyledConnectedText
+  StyledConnectedText,
+  StyledCodeTypography,
+  StyledNewGameCodeButton,
+  StyledInvalidCodeSpan,
 }

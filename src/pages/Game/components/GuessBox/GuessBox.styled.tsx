@@ -12,6 +12,9 @@ export {
   StyledHeaderTypographyText,
 } from '../components.styled.tsx';
 
+const StyledAnswerRowsContainer = styled.div`
+  width: 138px;
+`
 const StyledHr = styled.hr`
   width: 95%;
   margin: 0;
@@ -32,4 +35,5 @@ const StyledResultBox = styled.div<{
 export {
   StyledHr,
   StyledResultBox,
+  StyledAnswerRowsContainer,
 }

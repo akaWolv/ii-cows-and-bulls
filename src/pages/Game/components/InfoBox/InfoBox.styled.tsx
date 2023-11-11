@@ -7,20 +7,21 @@ const StyledInfoBox = styled(Paper)`
   width: 95%;
   padding: 0.25em 0.5em !important;
   margin: 0 !important;
-  background-color: ${Colors.IMP_ORANGE_DARK} !important;
+  background-color: ${Colors.IMP_LIGHT_GREY} !important;
   color: ${Colors.IMP_DIM_WHITE} !important;
+  opacity: 0.7;
   
   text-align: center;
   font-weight: 200;
 `
 const RichContentContainer = styled.div`
- display: flex; 
- justify-content: space-around; 
- align-items: center; 
+  display: flex; 
+  justify-content: space-around; 
+  align-items: center; 
 `
 const RichContentSection = styled.div`
- display: flex; 
- align-items: center; 
+  display: flex; 
+  align-items: center; 
 `
 
 export {

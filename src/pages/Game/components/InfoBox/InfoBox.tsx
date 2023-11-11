@@ -45,7 +45,7 @@ const InfoBox: React.FC<Props> = (
       case !isGuessingTime:
         return (
           <RichContentContainer>
-            Digits found in:
+            Description:
             <RichContentSection>
               <RadioButtonUncheckedOutlinedIcon fontSize="small" style={{ opacity: 0.6 }} />&nbsp;incorrect spot,
             </RichContentSection>

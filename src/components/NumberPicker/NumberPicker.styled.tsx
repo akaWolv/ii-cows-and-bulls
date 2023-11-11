@@ -1,10 +1,14 @@
 import styled from 'styled-components'
 
-const StyledNumberPickerContainer = styled.div`
+const StyledNumberPickerContainer = styled.div<{
+  $disabled?: boolean
+}>`
   width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  opacity: ${({ $disabled }) => $disabled ? '0.3' : '1'};
+  filter: blur(${({ $disabled }) => $disabled ? '3px' : '0'});
 `
 
 export {

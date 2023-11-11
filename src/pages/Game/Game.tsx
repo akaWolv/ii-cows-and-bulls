@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import { Typography, IconButton } from '@mui/material';
 import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
@@ -14,33 +14,39 @@ import {
 } from './Game.styled';
 
 import ImpLogo from 'components/ImpLogo';
-import { GuessList } from 'types/Guess.ts';
 
 import { GuessBox, GuessNumbers, InfoBox } from './components';
 import GameNumberPicker from './components/GameNumberPicker/GameNumberPicker.tsx';
+import { FormValues, Guess } from 'types/CommonTypes.ts';
+import SessionContext from 'context/SessionContext.ts';
 
-const yourGuesses: GuessList = [
-  {id: 1, number: 1234, answer: {c: 1, b: 0}},
-  {id: 2, number: 5678, answer: {c: 2, b: 0}},
-  {id: 3, number: 5489, answer: {c: 0, b: 1}},
-  {id: 4, number: 5489, answer: {c: 0, b: 0}},
-  {id: 5, number: 5489, answer: {c: 0, b: 1}},
-  {id: 6, number: 5489, answer: {c: 0, b: 1}},
-  {id: 7, number: 5489, answer: {c: 0, b: 1}},
-  {id: 8, number: 1234, answer: {c: 1, b: 3}}
-]
-const opponentGuesses: GuessList = [
-  {id: 1, number: 1234, answer: {c: 1, b: 0}},
-  {id: 2, number: 5678, answer: {c: 2, b: 0}},
-  {id: 3, number: 1258, answer: {c: 0, b: 1}},
-  {id: 4, number: 1258, answer: {c: 0, b: 1}},
-  {id: 5, number: 1258, answer: {c: 0, b: 1}},
-  {id: 6, number: 1258, answer: {c: 0, b: 1}},
-  {id: 7, number: 2190, answer: {c: 2, b: 2}},
-  {id: 8, number: 2910, answer: {c: 1, b: 3}}
-]
+// const yourGuesses: GuessList = [
+//   // {id: 1, number: 1234, answer: {c: 1, b: 0}},
+//   // {id: 2, number: 5678, answer: {c: 2, b: 0}},
+//   // {id: 3, number: 5489, answer: {c: 0, b: 1}},
+//   // {id: 4, number: 5489, answer: {c: 0, b: 0}},
+//   // {id: 5, number: 5489, answer: {c: 0, b: 1}},
+//   // {id: 6, number: 5489, answer: {c: 0, b: 1}},
+//   // {id: 7, number: 5489, answer: {c: 0, b: 1}},
+//   // {id: 8, number: 1234, answer: {c: 1, b: 3}}
+// ]
+// const opponentGuesses: GuessList = [
+//   // {id: 1, number: 1234, answer: {c: 1, b: 0}},
+//   // {id: 2, number: 5678, answer: {c: 2, b: 0}},
+//   // {id: 3, number: 1258, answer: {c: 0, b: 1}},
+//   // {id: 4, number: 1258, answer: {c: 0, b: 1}},
+//   // {id: 5, number: 1258, answer: {c: 0, b: 1}},
+//   // {id: 6, number: 1258, answer: {c: 0, b: 1}},
+//   // {id: 7, number: 2190, answer: {c: 2, b: 2}},
+//   // {id: 8, number: 2910, answer: {c: 1, b: 3}}
+// ]
 
 const Game: React.FC = () => {
+  const { game, user } = useContext(SessionContext);
+
+  const [yourGuesses, setYourGuesses] = useState<Guess[]>([])
+  const [opponentGuesses, setOpponentGuesses] = useState<Guess[]>([])
+
   const isGuessingTime = false
   const isPlayerPickedNumber = false
   const didOpponentPickedNumber = false
@@ -51,6 +57,25 @@ const Game: React.FC = () => {
   const methods = useForm<FormValues>({
     defaultValues: {digitA: '', digitB: '', digitC: '', digitD: ''}
   })
+
+  useEffect(() => {
+    if (Object.keys(game).length > 0 && Object.keys(user).length > 0) {
+      console.log('GAME:game', game)
+      console.log('GAME:user', user)
+
+      const {usersGuessList} = game
+      const {codeHash: yourCodeHash} = user
+      for (const [userGuessListCodeHash, userGuessList] of Object.entries(usersGuessList))  {
+        console.log(userGuessListCodeHash, userGuessList)
+        if (userGuessListCodeHash === yourCodeHash) {
+          setYourGuesses(userGuessList)
+        } else {
+          setOpponentGuesses(userGuessList)
+        }
+      }
+    }
+  }, [game, user])
+
   return (
     <StyledPageContainer>
       <StyledHeaderContainer>
@@ -61,7 +86,6 @@ const Game: React.FC = () => {
         <IconButton><HelpOutlineOutlinedIcon sx={{color: 'dimgrey'}}/></IconButton>
       </StyledHeaderContainer>
       <StyledContentContainer>
-
         <GuessBoxesContainer>
           <GuessBox
             guessList={yourGuesses}
@@ -83,7 +107,7 @@ const Game: React.FC = () => {
             isGuessingTime={isGuessingTime}
             isNumberPicked={didOpponentPickedNumber}
             variant="opponent"
-            header="Opponent"
+            header="Your number"
             headerNumber={2468}
             isGameEnded={isGameEnded}
             isWin={opponentWon}

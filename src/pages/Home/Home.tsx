@@ -1,4 +1,5 @@
 import React from 'react'
+import { useNavigate } from 'react-router-dom';
 import { Button, Typography } from '@mui/material'
 import { StyledButtonContainer } from './Home.styled';
 import { StyledPageContainer } from 'pages/pages.styled';
@@ -6,6 +7,8 @@ import { StyledPageContainer } from 'pages/pages.styled';
 import ImpLogo from 'components/ImpLogo';
 
 const Home: React.FC = () => {
+  const navigate = useNavigate();
+
   return (
     <StyledPageContainer $dense={true}>
       <ImpLogo />
@@ -18,7 +21,7 @@ const Home: React.FC = () => {
           size="large"
           variant="contained"
           onClick={() => {
-            window.location.href = `/new`
+            navigate(`/new`)
           }}>
           Start Game
         </Button>
@@ -26,7 +29,7 @@ const Home: React.FC = () => {
           size="large"
           variant="contained"
           onClick={() => {
-            window.location.href = `/join`
+            navigate(`/join`)
           }}>
           Join Game
         </Button>

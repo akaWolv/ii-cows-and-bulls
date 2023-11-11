@@ -26,7 +26,7 @@ const GameNumberPicker: React.FC<Props> = (
 ) => {
   return (
     <>
-      <NumberPicker pickerSettings={PICKER}/>
+      <NumberPicker pickerSettings={PICKER} disabled={!isGuessingTime || isPlayerPickedNumber } />
       <StyledButtonContainer>
         <StyledButton
           type="submit"

@@ -6,10 +6,11 @@ const StyledContainer = styled.div`
   margin: 0;
   display: flex;
   padding: 0;
+  flex-grow: 2;
 `
 const StyledBox = styled(Paper)<{ $background: 'primary' | 'secondary' }>`
   padding: 0.2em 0.5em !important;
-  margin: 0;
+  margin: 0 auto;
   background-color: ${({$background}) => $background === 'primary' ? Colors.IMP_DARK_GREY : Colors.IMP_LIGHT_GREY } !important;
   display: flex;
   flex-direction: column-reverse;
@@ -19,10 +20,9 @@ const StyledBox = styled(Paper)<{ $background: 'primary' | 'secondary' }>`
 const StyledRow = styled.div`
   //background-color: lawngreen;
   //border: solid 1px lawngreen;
-  
+  //background-color: indigo;
   width: 100%;
   height: 30px;
-  padding: 0.25em !important;
 
   display: flex;
   flex-direction: row;
@@ -40,7 +40,7 @@ const StyledHeader = styled.div`
   color: ${Colors.IMP_ORANGE};
 `
 const StyledHeaderTypographyNumber = styled.div`
-  color: ${Colors.IMP_DIM_WHITE};
+  color: ${Colors.IMP_ORANGE};
   font-size: 1.1em;
 
   padding-right: 0.25em;
@@ -50,7 +50,7 @@ const StyledHeaderTypographyNumber = styled.div`
   align-items: center;
   justify-content: center;
 
-  font-weight: 300;
+  font-weight: 200;
   font-family: "Roboto Mono",Monospace,serif;
 `
 const StyledHeaderTypographyText = styled(Typography)`

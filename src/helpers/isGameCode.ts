@@ -1,0 +1,2 @@
+const isGameCode = (code: string|undefined): boolean => Boolean(String(code).match(/^[A-Za-z0-9]{6}$/))
+export default isGameCode

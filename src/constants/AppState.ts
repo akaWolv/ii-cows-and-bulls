@@ -1,0 +1,8 @@
+const AppState = {
+  DURING_THE_GAME: 'DURING_THE_GAME',
+  OUT_OF_THE_GAME: 'OUT_OF_THE_GAME',
+  READY_FOR_GAME: 'PREPARING_FOR_GAME',
+  UNKNOWN: 'UNKNOWN',
+}
+
+export default AppState

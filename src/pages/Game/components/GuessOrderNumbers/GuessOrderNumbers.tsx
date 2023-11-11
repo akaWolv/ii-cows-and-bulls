@@ -1,7 +1,6 @@
 import React from 'react';
 
 import Colors from 'constants/Colors.ts';
-import { GuessList } from 'types/Guess.ts';
 
 // noinspection ES6PreferShortImport
 import {
@@ -12,10 +11,11 @@ import {
   StyledHeaderTypographyText,
   StyledFunctionalRow
 } from './GuessOrderNumbers.styled.tsx';
+import { Guess } from 'types/CommonTypes.ts';
 
 type Props = {
-  guessListA: GuessList
-  guessListB: GuessList
+  guessListA: Guess[]
+  guessListB: Guess[]
   displayNextRow: boolean
   displayEmptyRow: boolean
 }

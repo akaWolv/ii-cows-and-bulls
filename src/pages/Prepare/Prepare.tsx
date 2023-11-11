@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useContext, useEffect } from 'react';
 import { useForm, FormProvider } from "react-hook-form"
 
 import { Button, Typography } from '@mui/material';
@@ -8,55 +8,83 @@ import { StyledButtonContainer, StyledRules, StyledPaper } from './Prepare.style
 import ImpLogo from 'components/ImpLogo';
 import NumberPicker from 'components/NumberPicker';
 import { PICKER } from 'constants/Settings';
-
-type FormValues = {
-  digitA: string,
-  digitB: string,
-  digitC: string,
-  digitD: string,
-};
+import SessionController from 'controllers/SessionController.tsx';
+import { SET_NUMBER_FOR_USER_IN_GAME } from 'constants/SocketMessages.ts';
+import SocketContext from 'context/SocketContext.ts';
+import SessionContext from 'context/SessionContext.ts';
+import { FormValues } from 'types/CommonTypes';
 
 const Prepare: React.FC = () => {
-  const methods = useForm<FormValues>({
+  const session = useContext(SessionContext);
+  const socket = useContext(SocketContext);
+
+  const formMethods = useForm<FormValues>({
     defaultValues: {digitA: '', digitB: '', digitC: '', digitD: ''}
   })
-  const {isValid} = methods.formState;
+  const {isValid} = formMethods.formState;
 
-  const onSubmit = (data: FormValues) => console.log(data, Object.values(data).join(''));
+  const sendPickANumberMessage = (number: string) => {
+    console.log(SET_NUMBER_FOR_USER_IN_GAME, {number});
+    socket.emit(SET_NUMBER_FOR_USER_IN_GAME, {number});
+  }
+
+  const onSubmit = (data: FormValues) => {
+    const number = Object.values(data).join('')
+    sendPickANumberMessage(number)
+  }
+
+  const registeredNumber = (() => {
+    return session.user?.number || ''
+  })()
+
+  const isSameNumber = (() => {
+    const { getValues } = formMethods
+    console.log(Object.values(getValues()).join('') , registeredNumber)
+    return Object.values(getValues()).join('') == registeredNumber
+  })()
+
+  useEffect(() => {
+    const { reset } = formMethods
+    const [digitA, digitB, digitC, digitD] = registeredNumber.split('')
+    console.log(formMethods.getValues())
+    reset({digitA, digitB, digitC, digitD})
+  }, [registeredNumber]);
 
   return (
-    <FormProvider {...methods}>
-      <form onSubmit={methods.handleSubmit(onSubmit)}>
-        <StyledPageContainer>
-          <ImpLogo />
-          <Typography gutterBottom={true} variant="h2">Pick your number</Typography>
+    <SessionController>
+      <FormProvider {...formMethods}>
+        <form onSubmit={formMethods.handleSubmit(onSubmit)}>
+          <StyledPageContainer>
+            <ImpLogo/>
+            <Typography gutterBottom={true} variant="h2">Pick your number</Typography>
 
-          <StyledPaper elevation={10}>
-            <StyledRules gutterBottom={true} variant="subtitle2">
-              <b><u>Rules</u></b> <br/>
-              Number cannot start with 0. <br/>
-              Digits cannot repeat.
-            </StyledRules>
-          </StyledPaper>
+            <StyledPaper elevation={10}>
+              <StyledRules gutterBottom={true} variant="subtitle2">
+                <b><u>Rules</u></b> <br/>
+                Number cannot start with 0. <br/>
+                Digits cannot repeat.
+              </StyledRules>
+            </StyledPaper>
 
-          <div style={{ width: '80%' }}>
-            <NumberPicker pickerSettings={PICKER}/>
-          </div>
+            <div style={{width: '80%'}}>
+              <NumberPicker pickerSettings={PICKER}/>
+            </div>
 
-          <StyledButtonContainer>
-            <Button
-              type="submit"
-              size="large"
-              fullWidth
-              variant="contained"
-              disabled={!isValid}
-            >
-              Confirm
-            </Button>
-          </StyledButtonContainer>
-        </StyledPageContainer>
-      </form>
-    </FormProvider>
+            <StyledButtonContainer>
+              <Button
+                type="submit"
+                size="large"
+                fullWidth
+                variant="contained"
+                disabled={!isValid || isSameNumber}
+              >
+                {registeredNumber ? `Picked: ${registeredNumber}${isSameNumber ? '' : ', change?'}` :  "Confirm"}
+              </Button>
+            </StyledButtonContainer>
+          </StyledPageContainer>
+        </form>
+      </FormProvider>
+    </SessionController>
   )
 }
 
