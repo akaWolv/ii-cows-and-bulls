@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useParams } from 'react-router-dom';
-import { Skeleton, Typography } from '@mui/material'
+import { useNavigate, useParams } from 'react-router-dom';
+import { Button, Skeleton, Typography } from '@mui/material'
 
 import SocketContext from 'context/SocketContext';
 
@@ -24,6 +24,7 @@ type UrlParams = {
 }
 
 const NewGame: React.FC = () => {
+  const navigate = useNavigate();
   const {gameCode: urlGameCode, userCode: urlUserCode}: UrlParams = useParams()
   const socket = useContext(SocketContext);
 
@@ -68,6 +69,8 @@ const NewGame: React.FC = () => {
         {/*  Play solo*/}
         {/*</Button>*/}
       </StyledStatusContainer>
+
+      <Button onClick={() => { navigate('/') }}>back to main page</Button>
     </StyledPageContainer>
   )
 }

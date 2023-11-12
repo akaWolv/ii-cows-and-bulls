@@ -1,13 +1,12 @@
 import React, { useContext, useEffect, useState } from 'react'
-import { useNavigate, useParams } from 'react-router-dom';
-import { Divider, IconButton, InputBase, Typography } from '@mui/material'
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Button, Divider, IconButton, InputBase, Typography } from '@mui/material'
 import {
   StyledStatusContainer,
   StyledConnectedText,
   StyledInputContainer,
   StyledFormHelperText,
   StyledLoadingButtonIcon,
-  StyledConnectedButtonIcon,
   StyledConfirmButtonIcon
 } from './JoinGame.styled';
 import HttpsIcon from '@mui/icons-material/Https';
@@ -18,10 +17,10 @@ import SocketContext from 'context/SocketContext.ts';
 import {
   CONNECT_TO_GAME_BY_CODES,
   ERROR_MESSAGE,
-  CONNECTED_TO_GAME
 } from "constants/SocketMessages.ts";
-import { isGameCode, isUserCode } from 'helpers';
+import { isGameCode } from 'helpers';
 import SessionController from 'controllers/SessionController.tsx';
+import { connectToGameByCodesMsg } from 'types/SocketMessages.ts';
 
 type UrlParams = {
   gameCode?: string
@@ -31,35 +30,32 @@ type UrlParams = {
 const JoinGame: React.FC = () => {
   const {gameCode: urlGameCode, userCode: urlUserCode}: UrlParams = useParams()
   const navigate = useNavigate();
+  const location = useLocation();
   const socket = useContext(SocketContext);
   const [gameCode, setGameCode] = useState(urlGameCode || '')
   const [isConnecting, setIsConnecting] = useState(false)
-  const [isConnected, setIsConnected] = useState(false)
 
   const isConnectionError = false;
   const connectionErrorMessage = null;
   const sendConnectionMessage = () => {
     setIsConnecting(true)
-    socket.emit(CONNECT_TO_GAME_BY_CODES, {userCode: urlUserCode, gameCode});
+    socket.emit(
+      CONNECT_TO_GAME_BY_CODES,
+      {userCode: urlUserCode, gameCode, isJoiningGame: true} as connectToGameByCodesMsg
+    );
   }
 
   useEffect(() => {
-    const handleConnectedToGame = ({gameCode, userCode}: { gameCode: string, userCode: string }) => {
-      if (isGameCode(gameCode) && isUserCode(userCode)) {
-        setIsConnected(true)
-        navigate(`/join/${gameCode}/${userCode}`)
+    const handleErrorMessage = () => {
+      setIsConnecting(false)
+      if (location.pathname.startsWith('/join/connecting')) {
+        navigate(`/join`)
       }
     }
 
-    const handleErrorMessage = () => {
-      setIsConnecting(false)
-    }
-
-    socket.on(CONNECTED_TO_GAME, handleConnectedToGame);
     socket.on(ERROR_MESSAGE, handleErrorMessage);
 
     return () => {
-      socket.off(CONNECTED_TO_GAME, handleConnectedToGame);
       socket.off(ERROR_MESSAGE, handleErrorMessage);
     };
   }, []);
@@ -84,7 +80,7 @@ const JoinGame: React.FC = () => {
           <ImpLogo/>
           <Typography gutterBottom={true} variant="h2">Join game</Typography>
           <Typography gutterBottom={true} variant="subtitle2">
-            <center>Type in password given by friend:</center>
+            <center>Type in password given by opponent:</center>
           </Typography>
 
           <StyledInputContainer $isError={isConnectionError}>
@@ -101,13 +97,11 @@ const JoinGame: React.FC = () => {
               error={isConnectionError}
             />
             <Divider sx={{height: 28, m: 0.5}} orientation="vertical"/>
-            <IconButton type="submit" sx={{p: '10px'}} aria-label="submit" disabled={isConnecting || isConnected}>
+            <IconButton type="submit" sx={{p: '10px'}} aria-label="submit" disabled={isConnecting}>
               {
                 isConnecting
                   ? <StyledLoadingButtonIcon/>
-                  : isConnected
-                    ? <StyledConnectedButtonIcon/>
-                    : <StyledConfirmButtonIcon/>
+                  : <StyledConfirmButtonIcon/>
               }
             </IconButton>
           </StyledInputContainer>
@@ -119,21 +113,11 @@ const JoinGame: React.FC = () => {
           <StyledStatusContainer>
             {
               isConnecting
-                ? (
-                  <>
-                    {/*<Typography gutterBottom={true} variant="subtitle2">*/}
-                    {/*  Enough waiting?*/}
-                    {/*</Typography>*/}
-                    {/*<Button variant="text">*/}
-                    {/*  Play solo*/}
-                    {/*</Button>*/}
-                  </>
-                )
-                : isConnected
-                  ? <StyledConnectedText variant="h2">Connected!</StyledConnectedText>
-                  : null
+                ? <StyledConnectedText variant="h2">Connecting...</StyledConnectedText>
+                : null
             }
           </StyledStatusContainer>
+          <Button onClick={() => { navigate('/') }}>back to main page</Button>
         </StyledPageContainer>
       </form>
     </SessionController>

@@ -1,6 +1,4 @@
 import React from 'react';
-
-import NavigateNextIcon from '@mui/icons-material/NavigateNext';
 import CheckIcon from '@mui/icons-material/Check';
 
 import {
@@ -12,18 +10,31 @@ import {
 import NumberPicker from 'components/NumberPicker';
 import { PICKER } from 'constants/Settings';
 import Colors from 'constants/Colors';
+import NotInterestedIcon from '@mui/icons-material/NotInterested';
 
 type Props = {
   isGuessingTime: boolean
   isPlayerPickedNumber: boolean
+  isNumberUsedBefore: boolean
 }
 
 const GameNumberPicker: React.FC<Props> = (
   {
     isGuessingTime,
     isPlayerPickedNumber,
+    isNumberUsedBefore,
   }
 ) => {
+  const renderButtonContent = () => {
+    if (isPlayerPickedNumber) {
+      return <CheckIcon sx={{color: Colors.IMP_GREEN_WIN}} />
+    } else if (isNumberUsedBefore) {
+      return <>Used&nbsp;<NotInterestedIcon fontSize='small' /></>
+    } else {
+      return <>Pick</>
+    }
+  }
+
   return (
     <>
       <NumberPicker pickerSettings={PICKER} disabled={!isGuessingTime || isPlayerPickedNumber } />
@@ -32,13 +43,9 @@ const GameNumberPicker: React.FC<Props> = (
           type="submit"
           size="small"
           variant="contained"
-          disabled={!isGuessingTime || isPlayerPickedNumber }
+          disabled={!isGuessingTime || isPlayerPickedNumber || isNumberUsedBefore }
         >
-          {
-            isPlayerPickedNumber
-              ? <><CheckIcon sx={{color: Colors.IMP_GREEN_WIN}}/></>
-              : <>Pick <NavigateNextIcon /></>
-          }
+          {renderButtonContent()}
         </StyledButton>
       </StyledButtonContainer>
       {!isGuessingTime && <StyledPickerBlend />}

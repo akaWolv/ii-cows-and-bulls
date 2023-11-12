@@ -4,34 +4,41 @@ export enum UserStatus {
 }
 
 export type UserCode = string
-export type UserId = string
+export type SocketId = string
 export type GameCode = string
 export type UserGameNumber = string
 export type Guess = { number: UserGameNumber, cows: number, bulls: number }
+export type CodeHash = string
 export type User = {
-  id: string,
-  code: UserCode,
-  codeHash: string,
-  status: UserStatus,
-  guesses: Guess[],
+  id: string
+  code: UserCode
+  codeHash: CodeHash
+  status: UserStatus
+  guesses: Guess[]
+  isWin: boolean
   number: UserGameNumber
 }
 export type Game = { code: GameCode, users: User[] }
 export type Store = {
   games: Game[]
 }
+export type SingleUserGuessReport = {
+  numberOfGuessesMade: number,
+  visibleGuesses: Guess[]
+}
 export type SessionGameData = {
-  status: string,
-  code: GameCode,
-  numberOfPlayers: number,
-  usersHashList: string[],
-  usersGuessList: {[key: string]: Guess[]}
+  status: string
+  code: GameCode
+  usersHashList: CodeHash[]
+  connectedHashList: CodeHash[]
+  winners: CodeHash[]
+  usersGuessList: {[key: string]: SingleUserGuessReport}
 }
 export type SessionUserData = User
-export type SessionData = { game: SessionGameData } & { user: SessionUserData }
+export type SessionData = { game: SessionGameData } & { user: SessionUserData } & { isPlayerConnected: boolean, isOpponentConnected: boolean }
 export type FormValues = {
-  digitA: string,
-  digitB: string,
-  digitC: string,
-  digitD: string,
+  digitA: string
+  digitB: string
+  digitC: string
+  digitD: string
 };

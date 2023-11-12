@@ -1,7 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 
-import { Typography, IconButton } from '@mui/material';
-import HelpOutlineOutlinedIcon from '@mui/icons-material/HelpOutlineOutlined';
+import { Typography } from '@mui/material';
 
 import { useForm, FormProvider } from "react-hook-form"
 
@@ -9,128 +8,187 @@ import { StyledPageContainer } from 'pages/pages.styled';
 import {
   StyledHeaderContainer,
   GuessBoxesContainer,
-  StyledPickerProvider,
-  StyledContentContainer,
+  StyledPickerContainer,
+  StyledContentContainer, StyledGuessHeader, StyledGuessHeaderLeft, StyledGuessHeaderRight
 } from './Game.styled';
 
 import ImpLogo from 'components/ImpLogo';
 
-import { GuessBox, GuessNumbers, InfoBox } from './components';
+import { GameMenu, GuessBox, GuessNumbers, Help, InfoBox } from './components';
 import GameNumberPicker from './components/GameNumberPicker/GameNumberPicker.tsx';
-import { FormValues, Guess } from 'types/CommonTypes.ts';
+import { FormValues, GameCode, Guess, UserCode, UserGameNumber } from 'types/CommonTypes.ts';
 import SessionContext from 'context/SessionContext.ts';
-
-// const yourGuesses: GuessList = [
-//   // {id: 1, number: 1234, answer: {c: 1, b: 0}},
-//   // {id: 2, number: 5678, answer: {c: 2, b: 0}},
-//   // {id: 3, number: 5489, answer: {c: 0, b: 1}},
-//   // {id: 4, number: 5489, answer: {c: 0, b: 0}},
-//   // {id: 5, number: 5489, answer: {c: 0, b: 1}},
-//   // {id: 6, number: 5489, answer: {c: 0, b: 1}},
-//   // {id: 7, number: 5489, answer: {c: 0, b: 1}},
-//   // {id: 8, number: 1234, answer: {c: 1, b: 3}}
-// ]
-// const opponentGuesses: GuessList = [
-//   // {id: 1, number: 1234, answer: {c: 1, b: 0}},
-//   // {id: 2, number: 5678, answer: {c: 2, b: 0}},
-//   // {id: 3, number: 1258, answer: {c: 0, b: 1}},
-//   // {id: 4, number: 1258, answer: {c: 0, b: 1}},
-//   // {id: 5, number: 1258, answer: {c: 0, b: 1}},
-//   // {id: 6, number: 1258, answer: {c: 0, b: 1}},
-//   // {id: 7, number: 2190, answer: {c: 2, b: 2}},
-//   // {id: 8, number: 2910, answer: {c: 1, b: 3}}
-// ]
+import SocketContext from 'context/SocketContext.ts';
+import {
+  GAME_STATUS_MSG_CONCLUDED,
+  GAME_STATUS_MSG_PLAYING,
+  GAME_STATUS_MSG_SUSPENDED,
+  GUESS
+} from 'constants/SocketMessages.ts';
 
 const Game: React.FC = () => {
-  const { game, user } = useContext(SessionContext);
+  const {game, user, isPlayerConnected, isOpponentConnected} = useContext(SessionContext);
+  const socket = useContext(SocketContext);
 
-  const [yourGuesses, setYourGuesses] = useState<Guess[]>([])
+  const [gameCode, setGameCode] = useState<GameCode>('')
+  const [userCode, setUserCode] = useState<UserCode>('')
+
+  const [playerNumber, setPlayerNumber] = useState<UserGameNumber>('')
+
+  const [playerNumberOfGuessesMade, setPlayerNumberOfGuessesMade] = useState<number>(0)
+  const [opponentNumberOfGuessesMade, setOpponentNumberOfGuessesMade] = useState<number>(0)
+  const [playerGuesses, setPlayerGuesses] = useState<Guess[]>([])
   const [opponentGuesses, setOpponentGuesses] = useState<Guess[]>([])
 
-  const isGuessingTime = false
-  const isPlayerPickedNumber = false
-  const didOpponentPickedNumber = false
-  const isGameEnded = false
-  const playerWon = false
-  const opponentWon = false
+  const [isPlayerPickedNumber, setIsPlayerPickedNumber] = useState<boolean>(false)
+  const [didOpponentPickedNumber, setDidOpponentPickedNumber] = useState<boolean>(false)
 
-  const methods = useForm<FormValues>({
+  const [isGameActive, setIsGameActive] = useState<boolean>(true)
+  const [isGameEnded, setIsGameEnded] = useState<boolean>(false)
+  const [playerWon, setPlayerWon] = useState<boolean>(false)
+  const [opponentWon, setOpponentWon] = useState<boolean>(false)
+
+  const formMethods = useForm<FormValues>({
     defaultValues: {digitA: '', digitB: '', digitC: '', digitD: ''}
   })
+  const { getValues: formGetValues } = formMethods
 
   useEffect(() => {
     if (Object.keys(game).length > 0 && Object.keys(user).length > 0) {
       console.log('GAME:game', game)
       console.log('GAME:user', user)
 
-      const {usersGuessList} = game
+      const { number, codeHash, code: userCode} = user
+      const {
+        usersGuessList,
+        winners,
+        status,
+        code: gameCode,
+      } = game
+
+      setPlayerNumber(number)
+      setGameCode(gameCode)
+      setUserCode(userCode)
+
       const {codeHash: yourCodeHash} = user
-      for (const [userGuessListCodeHash, userGuessList] of Object.entries(usersGuessList))  {
-        console.log(userGuessListCodeHash, userGuessList)
+      for (const [userGuessListCodeHash, userGuessList] of Object.entries(usersGuessList)) {
+        const {numberOfGuessesMade, visibleGuesses} = userGuessList
         if (userGuessListCodeHash === yourCodeHash) {
-          setYourGuesses(userGuessList)
+          setPlayerNumberOfGuessesMade(numberOfGuessesMade)
+          setPlayerGuesses(visibleGuesses)
         } else {
-          setOpponentGuesses(userGuessList)
+          setOpponentNumberOfGuessesMade(numberOfGuessesMade)
+          setOpponentGuesses(visibleGuesses)
         }
+      }
+
+      switch (status) {
+        case GAME_STATUS_MSG_CONCLUDED:
+          setIsGameEnded(true)
+          setIsGameActive(false)
+          for (const winnerCodeHash of winners) {
+            winnerCodeHash == codeHash ? setPlayerWon(true) : setOpponentWon(true)
+          }
+          break;
+        case GAME_STATUS_MSG_SUSPENDED:
+          setIsGameActive(false)
+          break;
+        case GAME_STATUS_MSG_PLAYING:
+          setIsGameActive(true)
+          break;
       }
     }
   }, [game, user])
 
+  useEffect(() => {
+    setIsPlayerPickedNumber(playerNumberOfGuessesMade > opponentNumberOfGuessesMade)
+    setDidOpponentPickedNumber(playerNumberOfGuessesMade < opponentNumberOfGuessesMade)
+  }, [playerNumberOfGuessesMade, opponentNumberOfGuessesMade])
+
+  const sendGuess = (number: string) => {
+    socket.emit(GUESS, {number});
+  }
+  const onSubmit = (data: FormValues) => {
+    const number = Object.values(data).join('')
+    sendGuess(number)
+  }
+  const formNumber = (() => Object.values(formGetValues()).join(''))()
+  const isFormNumberUsedBefore = (() => {
+    console.log('isFormNumberUsedBefore', formNumber, playerGuesses)
+    return playerGuesses.filter(({number}) => number == formNumber).length > 0
+  })()
+
   return (
     <StyledPageContainer>
       <StyledHeaderContainer>
-        <ImpLogo size="sm"/>
+        <ImpLogo size="sm" />
         <div style={{flexGrow: '2'}}>
           <Typography variant="h2">Game</Typography>
         </div>
-        <IconButton><HelpOutlineOutlinedIcon sx={{color: 'dimgrey'}}/></IconButton>
+        <Help />
+        <GameMenu
+          gameCode={gameCode}
+          userCode={userCode}
+          isPlayerConnected={isPlayerConnected}
+          isOpponentConnected={isOpponentConnected}
+        />
       </StyledHeaderContainer>
       <StyledContentContainer>
+        <StyledGuessHeader container style={{textAlign: 'center'}}>
+          <StyledGuessHeaderLeft item xs={6}>Your guesses</StyledGuessHeaderLeft>
+          <StyledGuessHeaderRight item xs={6}>Opponents guesses</StyledGuessHeaderRight>
+        </StyledGuessHeader>
         <GuessBoxesContainer>
           <GuessBox
-            guessList={yourGuesses}
-            isGuessingTime={isGuessingTime}
+            guessList={playerGuesses}
+            isGameActive={isGameActive}
             isNumberPicked={isPlayerPickedNumber}
             variant="player"
-            header="Your guesses"
+            header=""
             isGameEnded={isGameEnded}
             isWin={playerWon}
+            isTie={playerWon && opponentWon}
+            highlightedNumber={isFormNumberUsedBefore ? formNumber : undefined}
           />
           <GuessNumbers
-            guessListA={yourGuesses}
+            guessListA={playerGuesses}
             guessListB={opponentGuesses}
-            displayNextRow={isGuessingTime}
+            displayNextRow={isGameActive}
             displayEmptyRow={isGameEnded}
           />
           <GuessBox
             guessList={opponentGuesses}
-            isGuessingTime={isGuessingTime}
+            isGameActive={isGameActive}
             isNumberPicked={didOpponentPickedNumber}
             variant="opponent"
             header="Your number"
-            headerNumber={2468}
+            headerNumber={playerNumber}
             isGameEnded={isGameEnded}
             isWin={opponentWon}
+            isTie={playerWon && opponentWon}
           />
         </GuessBoxesContainer>
 
         <InfoBox
-            isGuessingTime={isGuessingTime}
-            isNumberPicked={isPlayerPickedNumber}
-            didOpponentPickedNumber={didOpponentPickedNumber}
-            isGameEnded={isGameEnded}
-            playerWon={playerWon}
-            opponentWon={opponentWon}
+          isGameActive={isGameActive}
+          isNumberPicked={isPlayerPickedNumber}
+          didOpponentPickedNumber={didOpponentPickedNumber}
+          isGameEnded={isGameEnded}
+          playerWon={playerWon}
+          opponentWon={opponentWon}
         />
 
-        <StyledPickerProvider>
-          <FormProvider {...methods}>
-            <GameNumberPicker
-              isGuessingTime={isGuessingTime}
-              isPlayerPickedNumber={isPlayerPickedNumber}
-            />
-          </FormProvider>
-        </StyledPickerProvider>
+        <FormProvider {...formMethods}>
+          <form onSubmit={formMethods.handleSubmit(onSubmit)}>
+            <StyledPickerContainer>
+              <GameNumberPicker
+                isGuessingTime={isGameActive}
+                isPlayerPickedNumber={isPlayerPickedNumber}
+                isNumberUsedBefore={isFormNumberUsedBefore}
+              />
+            </StyledPickerContainer>
+          </form>
+        </FormProvider>
       </StyledContentContainer>
     </StyledPageContainer>
   )

@@ -9,7 +9,8 @@ import {
   StyledRow,
   StyledHeader,
   StyledHeaderTypographyText,
-  StyledFunctionalRow
+  StyledFunctionalRow,
+  StyledNumberRowIcon
 } from './GuessOrderNumbers.styled.tsx';
 import { Guess } from 'types/CommonTypes.ts';
 
@@ -36,16 +37,12 @@ const GuessOrderNumbers: React.FC<Props> = (
       <StyledBox elevation={3} $background="primary" style={{backgroundColor: `${Colors.IMP_DARK_GREY} !important`}}>
 
         <StyledHeader>
-          <StyledHeaderTypographyText variant="h6">#</StyledHeaderTypographyText>
+          <StyledHeaderTypographyText variant="h6"><StyledNumberRowIcon /></StyledHeaderTypographyText>
         </StyledHeader>
 
         <hr style={{width: '95%', margin: 0, border: 'none', height: 1, backgroundColor: Colors.IMP_DARK_GREY}}/>
 
-        {
-          displayEmptyRow && (
-            <StyledFunctionalRow />
-          )
-        }
+        { displayEmptyRow && <StyledFunctionalRow /> }
 
         {
           displayNextRow && (

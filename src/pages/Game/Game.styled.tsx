@@ -1,8 +1,10 @@
 import styled from 'styled-components'
+import { Grid } from '@mui/material';
+import Colors from 'constants/Colors.ts';
 
 const StyledHeaderContainer = styled.div`
   width: 100%;
-  height: 75px;
+  height: 55px;
   display: flex;
   flex-direction: row;
   align-items: center;
@@ -22,7 +24,6 @@ const GuessBoxesContainer = styled.div`
 
 // content
 const StyledContentContainer = styled.div`
-  //background-color: #2dc51d;
   flex-grow: 2;
   
   width: 100%;
@@ -31,9 +32,7 @@ const StyledContentContainer = styled.div`
   align-items: center;
   justify-content: space-between;
 `
-const StyledPickerProvider = styled.div`
-  //background-color: lightpink;
-  
+const StyledPickerContainer = styled.div`
   width: 100%;
   position: relative;
   display: flex; 
@@ -42,9 +41,25 @@ const StyledPickerProvider = styled.div`
   justify-content: space-between;
 `
 
+const StyledGuessHeader = styled(Grid)`
+  font-size: 0.8em;
+  padding: 0 10px;
+  margin-bottom: 5px;
+  color: ${Colors.IMP_DIM_WHITE};
+`
+const StyledGuessHeaderLeft = styled(Grid)`
+  text-align: left;
+`
+const StyledGuessHeaderRight = styled(Grid)`
+  text-align: right;
+`
+
 export {
   StyledHeaderContainer,
   GuessBoxesContainer,
-  StyledPickerProvider,
+  StyledPickerContainer,
   StyledContentContainer,
+  StyledGuessHeader,
+  StyledGuessHeaderLeft,
+  StyledGuessHeaderRight,
 }

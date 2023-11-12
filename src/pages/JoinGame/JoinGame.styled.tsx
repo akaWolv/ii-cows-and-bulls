@@ -2,7 +2,6 @@ import styled, { keyframes } from 'styled-components'
 import { Paper, FormHelperText, Typography } from '@mui/material';
 import Colors from 'constants/Colors';
 import RotateRightIcon from '@mui/icons-material/RotateRight';
-import DoneIcon from '@mui/icons-material/Done';
 import EastIcon from '@mui/icons-material/East';
 
 const StyledStatusContainer = styled.div`
@@ -48,10 +47,6 @@ const StyledLoadingButtonIcon = styled(RotateRightIcon)`
   animation: ${spinAnimation} 600ms infinite linear;
 `
 
-const StyledConnectedButtonIcon = styled(DoneIcon)`
-  color: white;
-`
-
 const StyledConfirmButtonIcon = styled(EastIcon)`
 `
 
@@ -61,6 +56,5 @@ export {
   StyledFormHelperText,
   StyledInputContainer,
   StyledLoadingButtonIcon,
-  StyledConnectedButtonIcon,
   StyledConfirmButtonIcon,
 }

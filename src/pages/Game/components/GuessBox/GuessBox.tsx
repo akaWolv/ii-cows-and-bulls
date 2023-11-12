@@ -20,36 +20,38 @@ import {
   StyledResultBox,
   StyledAnswerRowsContainer
 } from './GuessBox.styled.tsx';
-import { Guess } from 'types/CommonTypes.ts';
+import { Guess, UserGameNumber } from 'types/CommonTypes.ts';
 
 type Props = {
-  header: string
   guessList: Guess[]
-  isGuessingTime: boolean
+  isGameActive: boolean
   isNumberPicked: boolean
   isGameEnded: boolean
   isWin: boolean
+  isTie: boolean
+  header?: string
   variant?: 'player' | 'opponent'
-  headerNumber?: number
+  headerNumber?: UserGameNumber
+  highlightedNumber?: UserGameNumber
 }
 
 const GuessBox: React.FC<Props> = (
   {
     guessList,
     header,
-    isGuessingTime = false,
+    isGameActive = false,
     isNumberPicked = false,
     isGameEnded = false,
     isWin = false,
+    isTie = false,
     variant = 'player',
-    headerNumber
+    headerNumber,
+    highlightedNumber
   }
 ) => {
   let cColor = '#171717'
   let bColor = '#0a0a0a'
   if (variant === 'opponent') {
-    // cColor = '#444444'
-    // bColor = '#575757'
     cColor = '#171717'
     bColor = '#0a0a0a'
   }
@@ -70,27 +72,30 @@ const GuessBox: React.FC<Props> = (
             <StyledResultBox $isWin={isWin}>
               {
                 isWin
-                  ? <><SentimentVerySatisfiedIcon/><b>Good job!</b></>
-                  : <><SentimentNeutralIcon/>Try harder</>
+                  ? <><SentimentVerySatisfiedIcon/>{isTie ? 'It\'s a draw!' : variant == 'player' ? 'You won!' : 'Opponent won'}</>
+                  : <><SentimentNeutralIcon/>{variant == 'player' ? 'You lost' : 'Opponent lost'}</>
               }
             </StyledResultBox>
           )
         }
 
-        <LoadingRow isGuessingTime={isGuessingTime} isNumberPicked={isNumberPicked}/>
+        <LoadingRow isGuessingTime={isGameActive} isNumberPicked={isNumberPicked}/>
         <StyledAnswerRowsContainer>
           {
-            Array.from(guessList).reverse().map(({number, bulls, cows}, id) => {
+            Array.from(guessList).map(({number, bulls, cows}, id) => {
               const bAnswerList = getAnswerArray(bulls)
               const cAnswerList = getAnswerArray(cows)
 
               return (
                 <StyledRow key={id}>
-                  <StyledGuessNumber $variant={variant === 'player' ? 'primary' : 'secondary'}>
+                  <StyledGuessNumber
+                    $variant={variant === 'player' ? 'primary' : 'secondary'}
+                    $isHighlighted={number === highlightedNumber}
+                  >
                     {number}
                   </StyledGuessNumber>
                   <StyledAnswerContainer>
-                    {bAnswerList.length + cAnswerList.length === 0 && <i>- empty -</i>}
+                    {bAnswerList.length + cAnswerList.length === 0 && <i>empty</i>}
                     {
                       bAnswerList.map((k) =>
                         <CheckCircleTwoToneIcon key={k} fontSize="small" sx={{color: bColor}}/>

@@ -1,4 +1,4 @@
-import styled from 'styled-components'
+import styled, { keyframes } from 'styled-components'
 import { Paper, Typography } from '@mui/material';
 import Colors from 'constants/Colors.ts';
 
@@ -18,9 +18,6 @@ const StyledBox = styled(Paper)<{ $background: 'primary' | 'secondary' }>`
   justify-content: flex-start;
 `
 const StyledRow = styled.div`
-  //background-color: lawngreen;
-  //border: solid 1px lawngreen;
-  //background-color: indigo;
   width: 100%;
   height: 30px;
 
@@ -54,13 +51,11 @@ const StyledHeaderTypographyNumber = styled.div`
   font-family: "Roboto Mono",Monospace,serif;
 `
 const StyledHeaderTypographyText = styled(Typography)`
-  width: 60%;
+  width: 100%;
   text-align: center;
   color: ${Colors.IMP_DIM_WHITE};
 `
 const StyledAnswerContainer = styled.div`
-  //background-color: yellow;
-  
   width: 60%;
     
   display: flex;
@@ -71,8 +66,18 @@ const StyledAnswerContainer = styled.div`
   color: ${Colors.IMP_DARK_GREY};
   font-weight: 300;
 `
-const StyledGuessNumber = styled.div<{ $variant?: 'primary' | 'secondary' }>`
-  //background-color: red;
+const breatheAnimation = keyframes`
+  0%, 33% {
+    opacity: 1;
+  }
+  33%, 66% {
+    opacity: 0.5;
+  }
+  66%, 99% {
+    opacity: 1;
+  }
+`
+const StyledGuessNumber = styled.div<{ $variant?: 'primary' | 'secondary', $isHighlighted?: boolean  }>`
   flex-grow: 2;
   font-size: 1.1em;
   
@@ -85,12 +90,14 @@ const StyledGuessNumber = styled.div<{ $variant?: 'primary' | 'secondary' }>`
 
   font-weight: ${({$variant}) => $variant === 'primary' ? 400 : 200 } !important;
   font-family: "Roboto Mono",Monospace,serif;
-  color: ${({$variant}) => $variant === 'primary' ? Colors.IMP_ORANGE : Colors.IMP_DIM_WHITE }
+  color: ${({$variant}) => $variant === 'primary' ? Colors.IMP_ORANGE : Colors.IMP_DIM_WHITE };
+
+  animation-name: ${({$isHighlighted}) => $isHighlighted ? breatheAnimation : 'none'};
+  animation-duration: 1.2s;
+  animation-iteration-count: infinite;
+  animation-timing-function: ease-in-out;
 `
 const StyledFunctionalRow = styled.div`
-  //background-color: lawngreen;
-  //border: solid 1px lawngreen;
-  
   width: 100%;
   height: 30px;
   padding: 0.25em !important;

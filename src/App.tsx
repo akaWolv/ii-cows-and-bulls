@@ -6,6 +6,7 @@ import NewGame from './pages/NewGame';
 import Prepare from './pages/Prepare';
 import JoinGame from './pages/JoinGame';
 import Game from './pages/Game';
+import Error from './pages/Error';
 import SessionController from 'controllers/SessionController.tsx';
 import { ReactNode } from 'react';
 import AppProvider from 'common/AppProvider';
@@ -33,9 +34,11 @@ function App() {
                 <Route path={':userCode'} element={controller(<JoinGame/>)} />
               </Route>
             </Route>
+            <Route path={':gameCode'} element={controller(<JoinGame/>)} />
           </Route>
           <Route path={'/pick-a-number/:gameCode/:userCode'} element={controller(<Prepare/>)} />
           <Route path={'/game/:gameCode/:userCode'} element={controller(<Game/>)} />
+          <Route path={'/error/:code'} element={<Error />} />
         </Routes>
       </BrowserRouter>
     </AppProvider>

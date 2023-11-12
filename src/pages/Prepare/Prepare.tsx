@@ -13,6 +13,8 @@ import { SET_NUMBER_FOR_USER_IN_GAME } from 'constants/SocketMessages.ts';
 import SocketContext from 'context/SocketContext.ts';
 import SessionContext from 'context/SessionContext.ts';
 import { FormValues } from 'types/CommonTypes';
+import Colors from 'constants/Colors.ts';
+import CheckIcon from '@mui/icons-material/Check';
 
 const Prepare: React.FC = () => {
   const session = useContext(SessionContext);
@@ -39,7 +41,6 @@ const Prepare: React.FC = () => {
 
   const isSameNumber = (() => {
     const { getValues } = formMethods
-    console.log(Object.values(getValues()).join('') , registeredNumber)
     return Object.values(getValues()).join('') == registeredNumber
   })()
 
@@ -49,6 +50,17 @@ const Prepare: React.FC = () => {
     console.log(formMethods.getValues())
     reset({digitA, digitB, digitC, digitD})
   }, [registeredNumber]);
+
+  const renderButtonText = () => {
+    if (registeredNumber) {
+      return <>
+        {isSameNumber && <CheckIcon sx={{color: Colors.IMP_GREEN_WIN}}/>}
+        &nbsp;{!isSameNumber && 'You want change '} {registeredNumber}{!isSameNumber && '?'}
+      </>
+    } else {
+      return 'Confirm'
+    }
+  }
 
   return (
     <SessionController>
@@ -78,9 +90,10 @@ const Prepare: React.FC = () => {
                 variant="contained"
                 disabled={!isValid || isSameNumber}
               >
-                {registeredNumber ? `Picked: ${registeredNumber}${isSameNumber ? '' : ', change?'}` :  "Confirm"}
+                {renderButtonText()}
               </Button>
             </StyledButtonContainer>
+            {registeredNumber && 'Now wait for opponent to pick number...'}
           </StyledPageContainer>
         </form>
       </FormProvider>

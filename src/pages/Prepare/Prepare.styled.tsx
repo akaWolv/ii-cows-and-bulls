@@ -4,7 +4,8 @@ import Colors from 'constants/Colors';
 
 const StyledButtonContainer = styled.div`
   width: 80%;
-  height: 75px;
+  height: 55px;
+  margin-bottom: 10px;
   display: flex;
   align-items: flex-end;
   justify-content: space-evenly;

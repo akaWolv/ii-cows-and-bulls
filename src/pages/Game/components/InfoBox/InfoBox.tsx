@@ -1,14 +1,11 @@
 import React from 'react';
-import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
-import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
 import {
-  StyledInfoBox,
-  RichContentContainer,
-  RichContentSection,
+  StyledInfoBox
 } from './InfoBox.styled.tsx';
+import Colors from 'constants/Colors.ts';
 
 type Props = {
-  isGuessingTime: boolean
+  isGameActive: boolean
   isNumberPicked: boolean
   didOpponentPickedNumber: boolean
   isGameEnded: boolean
@@ -18,7 +15,7 @@ type Props = {
 
 const InfoBox: React.FC<Props> = (
   {
-    isGuessingTime = false,
+    isGameActive = false,
     isNumberPicked = false,
     didOpponentPickedNumber = false,
     isGameEnded = false,
@@ -29,31 +26,21 @@ const InfoBox: React.FC<Props> = (
   const getText = () => {
     switch (true) {
       case isGameEnded && playerWon && opponentWon:
-        return <>Game Over: <b>TIE!</b></>
+        return <>Game Over: <b>DRAW!</b></>
       case isGameEnded && playerWon:
         return <>Game Over: <b>You won!</b></>
       case isGameEnded && opponentWon:
         return <>Game Over: <i>need to be faster next time!</i></>
       case isGameEnded:
         return <>Game Over: <i>not concluded...</i></>
-      case isGuessingTime && !isNumberPicked:
+      case isGameActive && !isNumberPicked:
         return 'Pick a number you want to guess'
-      case isGuessingTime && !didOpponentPickedNumber:
+      case isGameActive && !didOpponentPickedNumber:
         return 'Wait for you opponent to guess...'
-      case isGuessingTime:
+      case isGameActive:
         return 'Both players picked numbers'
-      case !isGuessingTime:
-        return (
-          <RichContentContainer>
-            Description:
-            <RichContentSection>
-              <RadioButtonUncheckedOutlinedIcon fontSize="small" style={{ opacity: 0.6 }} />&nbsp;incorrect spot,
-            </RichContentSection>
-            <RichContentSection>
-              <CheckCircleTwoToneIcon fontSize="small" style={{ opacity: 0.6 }} />&nbsp;right spot
-            </RichContentSection>
-          </RichContentContainer>
-        )
+      case !isGameActive:
+        return <span style={{color: Colors.IMP_RED_BAD, fontWeight: 600}}>Game is suspended - connection error...</span>
       default:
         return 'Think about possible opponents number'
     }
