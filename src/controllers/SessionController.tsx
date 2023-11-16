@@ -1,5 +1,6 @@
 import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
+import Cookies from 'universal-cookie';
 
 import {
   MSG_CONNECT_TO_GAME_BY_CODES,
@@ -14,6 +15,8 @@ import SocketContext from 'context/SocketContext';
 import SessionContext, { DEFAULT_SESSION_DATA } from 'context/SessionContext';
 import { isGameCode, isUserCode } from 'helpers';
 import { connectToGameByCodesMsg } from 'types/SocketMessages.ts';
+import { LAST_GAME_CODE, LAST_USER_CODE } from 'constants/CookiesName.ts';
+
 
 type Props = {
   children: ReactNode
@@ -42,8 +45,6 @@ const SessionController: React.FC<Props> = ({children}) => {
 
   const sendConnectionMessage = () => {
     const isJoiningGame = location.pathname.startsWith('/join')
-    console.log(MSG_CONNECT_TO_GAME_BY_CODES,
-      {userCode: urlUserCode, gameCode: urlGameCode, isJoiningGame})
     socket.emit(
       MSG_CONNECT_TO_GAME_BY_CODES,
       {userCode: urlUserCode, gameCode: urlGameCode, isJoiningGame} as connectToGameByCodesMsg
@@ -55,17 +56,21 @@ const SessionController: React.FC<Props> = ({children}) => {
     setSessionGameData(sessionGameData)
     setGameCode(code)
     setGameStatus(status)
+
+    new Cookies().set(LAST_GAME_CODE, code, {path: '/', maxAge: 24 * 3600})
   }
   const handleSessionUserData = (sessionUserData: SessionUserData) => {
+    const {code} = sessionUserData
     setSessionData({...sessionData, user: sessionUserData})
     setSessionUserData(sessionUserData)
-    setUserCode(sessionUserData.code)
+    setUserCode(code)
+
+    new Cookies().set(LAST_USER_CODE, code, {path: '/', maxAge: 24 * 3600})
   }
   const rerouteOnGameStatus = () => {
     if (!gameCode || !gameStatus || !userCode) {
       return
     }
-    console.log(gameCode, gameStatus, userCode)
     switch (gameStatus) {
       case GameStatus.JOINING:
         if (location.pathname.startsWith('/new')) {

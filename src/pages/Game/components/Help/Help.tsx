@@ -4,6 +4,7 @@ import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUnc
 import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
 import { useCookies } from 'react-cookie';
 import { StyledIconForButton } from 'pages/Game/components/Help/Help.styled.tsx';
+import { ONE_TIME_HELP_DISPLAYED } from 'constants/CookiesName.ts';
 
 const style = {
   position: 'absolute',
@@ -17,16 +18,15 @@ const style = {
   p: 4,
   outline: 0
 }
-const COOKIE_ONE_TIME_HELP_DISPLAYED_NAME = 'oneTimeHelpDisplay'
 
 const Help: React.FC = () => {
-  const [{oneTimeHelpDisplay}, setCookie] = useCookies([COOKIE_ONE_TIME_HELP_DISPLAYED_NAME]);
+  const [{oneTimeHelpDisplay}, setCookie] = useCookies([ONE_TIME_HELP_DISPLAYED]);
   const [open, setOpen] = useState(false);
 
   const handleOpen = () => setOpen(true);
   const handleClose = () => {
     setOpen(false)
-    !oneTimeHelpDisplay && setCookie(COOKIE_ONE_TIME_HELP_DISPLAYED_NAME, true, {path: '/', maxAge: (365 * 24 * 60 * 60)})
+    !oneTimeHelpDisplay && setCookie(ONE_TIME_HELP_DISPLAYED, true, {path: '/', maxAge: (365 * 24 * 60 * 60)})
   }
 
   useEffect(() => void (!oneTimeHelpDisplay && setOpen(true)), [oneTimeHelpDisplay])
