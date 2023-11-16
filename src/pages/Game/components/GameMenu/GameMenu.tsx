@@ -5,7 +5,7 @@ import { GameCode, UserCode } from 'types/CommonTypes.ts';
 import { useNavigate } from 'react-router-dom';
 import { useContext } from 'react';
 import SocketContext from 'context/SocketContext.ts';
-import { QUIT_GAME } from 'constants/SocketMessages.ts';
+import { MSG_QUIT_GAME } from 'constants/SocketMessages.ts';
 
 type Props = {
   gameCode: GameCode
@@ -26,7 +26,7 @@ const GameMenu: React.FC<Props> = ({gameCode, userCode, isPlayerConnected, isOpp
     setAnchorEl(null)
   }
   const handleQuit = () => {
-    socket.emit(QUIT_GAME);
+    socket.emit(MSG_QUIT_GAME);
     navigate('/')
   }
 

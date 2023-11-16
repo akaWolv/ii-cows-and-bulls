@@ -19,12 +19,9 @@ import GameNumberPicker from './components/GameNumberPicker/GameNumberPicker.tsx
 import { FormValues, GameCode, Guess, UserCode, UserGameNumber } from 'types/CommonTypes.ts';
 import SessionContext from 'context/SessionContext.ts';
 import SocketContext from 'context/SocketContext.ts';
-import {
-  GAME_STATUS_MSG_CONCLUDED,
-  GAME_STATUS_MSG_PLAYING,
-  GAME_STATUS_MSG_SUSPENDED,
-  GUESS
-} from 'constants/SocketMessages.ts';
+import { MSG_GUESS } from 'constants/SocketMessages.ts';
+import { guessMsg } from 'types/SocketMessages.ts';
+import { GameStatus } from 'constants/GameStatus.ts';
 
 const Game: React.FC = () => {
   const {game, user, isPlayerConnected, isOpponentConnected} = useContext(SessionContext);
@@ -83,17 +80,17 @@ const Game: React.FC = () => {
       }
 
       switch (status) {
-        case GAME_STATUS_MSG_CONCLUDED:
+        case GameStatus.CONCLUDED:
           setIsGameEnded(true)
           setIsGameActive(false)
           for (const winnerCodeHash of winners) {
             winnerCodeHash == codeHash ? setPlayerWon(true) : setOpponentWon(true)
           }
           break;
-        case GAME_STATUS_MSG_SUSPENDED:
+        case GameStatus.SUSPENDED:
           setIsGameActive(false)
           break;
-        case GAME_STATUS_MSG_PLAYING:
+        case GameStatus.PLAYING:
           setIsGameActive(true)
           break;
       }
@@ -106,7 +103,7 @@ const Game: React.FC = () => {
   }, [playerNumberOfGuessesMade, opponentNumberOfGuessesMade])
 
   const sendGuess = (number: string) => {
-    socket.emit(GUESS, {number});
+    socket.emit(MSG_GUESS, {number, userCode} as guessMsg);
   }
   const onSubmit = (data: FormValues) => {
     const number = Object.values(data).join('')
@@ -180,7 +177,7 @@ const Game: React.FC = () => {
 
         <FormProvider {...formMethods}>
           <form onSubmit={formMethods.handleSubmit(onSubmit)}>
-            <StyledPickerContainer>
+            <StyledPickerContainer $disabled={!isGameActive}>
               <GameNumberPicker
                 isGuessingTime={isGameActive}
                 isPlayerPickedNumber={isPlayerPickedNumber}

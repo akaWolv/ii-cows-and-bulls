@@ -14,7 +14,7 @@ import {
 import ImpLogo from 'components/ImpLogo';
 import { StyledPageContainer } from 'pages/pages.styled';
 import {
-  CONNECT_TO_GAME_BY_CODES
+  MSG_CONNECT_TO_GAME_BY_CODES
 } from 'constants/SocketMessages.ts';
 import { isGameCode, isUserCode } from 'helpers';
 
@@ -31,12 +31,13 @@ const NewGame: React.FC = () => {
   const [gameCode, setGameCode] = useState(urlGameCode || '');
 
   useEffect(() => {
-    console.log('new game useEffect', !isGameCode(urlGameCode), !isUserCode(urlUserCode))
+    console.log('new game useEffect', isGameCode(urlGameCode), isUserCode(urlUserCode))
     // generate codes for new game
     if (isGameCode(urlGameCode) && isUserCode(urlUserCode)) {
       setGameCode(urlGameCode as string)
     } else {
-      socket.emit(CONNECT_TO_GAME_BY_CODES, {
+      console.log('/new', 'useEffect', 'CONNECT_TO_GAME_BY_CODES')
+      socket.emit(MSG_CONNECT_TO_GAME_BY_CODES, {
         userCode: undefined,
         gameCode: undefined
       });

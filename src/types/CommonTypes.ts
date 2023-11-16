@@ -1,7 +1,4 @@
-export enum UserStatus {
-  CONNECTED = 'connected',
-  DISCONNECTED = 'disconnected'
-}
+import { UserStatus } from 'constants/UserStatus.ts';
 
 export type UserCode = string
 export type SocketId = string

@@ -29,7 +29,7 @@ const Home: React.FC = () => {
           size="large"
           variant="contained"
           onClick={() => {
-            navigate(`/join`)
+            navigate('/join')
           }}>
           Join Game
         </Button>

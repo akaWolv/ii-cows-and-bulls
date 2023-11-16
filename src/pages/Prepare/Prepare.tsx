@@ -9,16 +9,17 @@ import ImpLogo from 'components/ImpLogo';
 import NumberPicker from 'components/NumberPicker';
 import { PICKER } from 'constants/Settings';
 import SessionController from 'controllers/SessionController.tsx';
-import { SET_NUMBER_FOR_USER_IN_GAME } from 'constants/SocketMessages.ts';
+import { MSG_SET_NUMBER_FOR_USER_IN_GAME } from 'constants/SocketMessages.ts';
 import SocketContext from 'context/SocketContext.ts';
 import SessionContext from 'context/SessionContext.ts';
 import { FormValues } from 'types/CommonTypes';
 import Colors from 'constants/Colors.ts';
 import CheckIcon from '@mui/icons-material/Check';
+import { setNumberForUserInGameMsg } from 'types/SocketMessages.ts';
 
 const Prepare: React.FC = () => {
-  const session = useContext(SessionContext);
   const socket = useContext(SocketContext);
+  const session = useContext(SessionContext);
 
   const formMethods = useForm<FormValues>({
     defaultValues: {digitA: '', digitB: '', digitC: '', digitD: ''}
@@ -26,8 +27,13 @@ const Prepare: React.FC = () => {
   const {isValid} = formMethods.formState;
 
   const sendPickANumberMessage = (number: string) => {
-    console.log(SET_NUMBER_FOR_USER_IN_GAME, {number});
-    socket.emit(SET_NUMBER_FOR_USER_IN_GAME, {number});
+    console.log(MSG_SET_NUMBER_FOR_USER_IN_GAME, {number});
+    if (session.user?.code) {
+      const msg: setNumberForUserInGameMsg = {number, userCode: session.user.code}
+      socket.emit(MSG_SET_NUMBER_FOR_USER_IN_GAME, msg);
+    } else {
+      console.error("Invalid session.user.code")
+    }
   }
 
   const onSubmit = (data: FormValues) => {

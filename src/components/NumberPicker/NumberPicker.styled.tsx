@@ -8,7 +8,7 @@ const StyledNumberPickerContainer = styled.div<{
   align-items: center;
   justify-content: space-between;
   opacity: ${({ $disabled }) => $disabled ? '0.3' : '1'};
-  filter: blur(${({ $disabled }) => $disabled ? '3px' : '0'});
+  filter: blur(${({ $disabled }) => $disabled ? '2px' : '0'});
 `
 
 export {

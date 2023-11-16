@@ -2,13 +2,11 @@ import React, { ReactNode, useContext, useEffect, useState } from 'react'
 import { useNavigate, useLocation, useParams } from 'react-router-dom';
 
 import {
-  CONNECT_TO_GAME_BY_CODES,
-  SESSION_GAME_DATA,
-  GAME_STATUS_MSG_JOINING,
-  GAME_STATUS_MSG_NOT_EXIST,
-  GAME_STATUS_MSG_PLAYING,
-  GAME_STATUS_MSG_PREPARE, SESSION_USER_DATA, GAME_STATUS_MSG_CONCLUDED, GAME_STATUS_MSG_SUSPENDED
+  MSG_CONNECT_TO_GAME_BY_CODES,
+  MSG_SESSION_GAME_DATA,
+  MSG_SESSION_USER_DATA
 } from 'constants/SocketMessages.ts';
+import { GameStatus } from 'constants/GameStatus.ts';
 
 import { GameCode, SessionData, SessionGameData, SessionUserData, UserCode } from 'types/CommonTypes.ts'
 
@@ -44,8 +42,10 @@ const SessionController: React.FC<Props> = ({children}) => {
 
   const sendConnectionMessage = () => {
     const isJoiningGame = location.pathname.startsWith('/join')
+    console.log(MSG_CONNECT_TO_GAME_BY_CODES,
+      {userCode: urlUserCode, gameCode: urlGameCode, isJoiningGame})
     socket.emit(
-      CONNECT_TO_GAME_BY_CODES,
+      MSG_CONNECT_TO_GAME_BY_CODES,
       {userCode: urlUserCode, gameCode: urlGameCode, isJoiningGame} as connectToGameByCodesMsg
     );
   }
@@ -65,30 +65,33 @@ const SessionController: React.FC<Props> = ({children}) => {
     if (!gameCode || !gameStatus || !userCode) {
       return
     }
+    console.log(gameCode, gameStatus, userCode)
     switch (gameStatus) {
-      case GAME_STATUS_MSG_JOINING:
-        if (location.pathname == '/new' || location.pathname == '/join') {
-          navigate(`${location.pathname}/connecting/${gameCode}/${userCode}`)
+      case GameStatus.JOINING:
+        if (location.pathname.startsWith('/new')) {
+          navigate(`/new/connecting/${gameCode}/${userCode}`)
         } else {
           navigate(`/join/connecting/${gameCode}/${userCode}`)
         }
         break;
-      case GAME_STATUS_MSG_NOT_EXIST:
+      case GameStatus.NOT_EXIST:
         navigate(`/error/404`)
         break;
-      case GAME_STATUS_MSG_PREPARE:
+      case GameStatus.PREPARE:
         navigate(`/pick-a-number/${gameCode}/${userCode}`)
         break;
-      case GAME_STATUS_MSG_PLAYING:
-      case GAME_STATUS_MSG_CONCLUDED:
-      case GAME_STATUS_MSG_SUSPENDED:
+      case GameStatus.PLAYING:
+      case GameStatus.CONCLUDED:
+      case GameStatus.SUSPENDED:
         navigate(`/game/${gameCode}/${userCode}`)
         break;
     }
   }
-  const checkPlayersConnection = () => {
+  const setPlayersConnection = () => {
     const {connectedHashList} = sessionGameData
     const {codeHash: playerCodeHash} = sessionUserData
+
+    console.log('>>> checking player connection', connectedHashList, playerCodeHash)
     if (connectedHashList && playerCodeHash) {
       let isUserConnected = false
       let isOpponentConnected = false
@@ -113,8 +116,11 @@ const SessionController: React.FC<Props> = ({children}) => {
 
   useEffect(() => {
     rerouteOnGameStatus()
-    checkPlayersConnection()
   }, [gameCode, gameStatus, userCode])
+
+  useEffect(() => {
+    setPlayersConnection()
+  }, [sessionGameData, sessionUserData])
 
   useEffect(() => {
     if (isGameCode(urlGameCode) && isUserCode(urlUserCode)) {
@@ -125,13 +131,13 @@ const SessionController: React.FC<Props> = ({children}) => {
   useEffect(() => {
     socket.on('connect', handleConnection);
     socket.on('disconnect', handleDisconnection);
-    socket.on(SESSION_GAME_DATA, handleSessionGameData);
-    socket.on(SESSION_USER_DATA, handleSessionUserData);
+    socket.on(MSG_SESSION_GAME_DATA, handleSessionGameData);
+    socket.on(MSG_SESSION_USER_DATA, handleSessionUserData);
     return () => {
       socket.off('connect', handleConnection);
       socket.off('disconnect', handleDisconnection);
-      socket.off(SESSION_GAME_DATA, handleSessionGameData);
-      socket.off(SESSION_USER_DATA, handleSessionUserData);
+      socket.off(MSG_SESSION_GAME_DATA, handleSessionGameData);
+      socket.off(MSG_SESSION_USER_DATA, handleSessionUserData);
     };
   }, []);
 

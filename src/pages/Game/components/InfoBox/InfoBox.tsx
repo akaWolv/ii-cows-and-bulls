@@ -30,9 +30,9 @@ const InfoBox: React.FC<Props> = (
       case isGameEnded && playerWon:
         return <>Game Over: <b>You won!</b></>
       case isGameEnded && opponentWon:
-        return <>Game Over: <i>need to be faster next time!</i></>
+        return <>Game Over: <i>You need to be faster next time.</i></>
       case isGameEnded:
-        return <>Game Over: <i>not concluded...</i></>
+        return <>Game Over: <i>not resolved...</i></>
       case isGameActive && !isNumberPicked:
         return 'Pick a number you want to guess'
       case isGameActive && !didOpponentPickedNumber:
@@ -40,7 +40,7 @@ const InfoBox: React.FC<Props> = (
       case isGameActive:
         return 'Both players picked numbers'
       case !isGameActive:
-        return <span style={{color: Colors.IMP_RED_BAD, fontWeight: 600}}>Game is suspended - connection error...</span>
+        return <span style={{color: Colors.IMP_RED_BAD, fontWeight: 400}}>Game suspended - players not connected</span>
       default:
         return 'Think about possible opponents number'
     }

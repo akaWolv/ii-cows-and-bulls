@@ -9,7 +9,7 @@ const StyledInfoBox = styled(Paper)`
   margin: 0 !important;
   background-color: ${Colors.IMP_LIGHT_GREY} !important;
   color: ${Colors.IMP_DIM_WHITE} !important;
-  opacity: 0.7;
+  opacity: 0.8;
   
   text-align: center;
   font-weight: 200;

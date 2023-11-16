@@ -1,19 +1,17 @@
 import { Md5 } from 'ts-md5';
 import dbHandler from "./db";
-import { Game, Guess, SessionGameData, User, UserGameNumber, UserStatus } from "types/CommonTypes";
+import { Game, Guess, SessionGameData, User, UserCode, UserGameNumber } from "types/CommonTypes";
+import { UserStatus } from 'constants/UserStatus';
 import { Server, Socket } from 'socket.io';
 import {
-  ERROR_MESSAGE,
-  GAME_STATUS_MSG_CONCLUDED,
-  GAME_STATUS_MSG_JOINING,
-  GAME_STATUS_MSG_PLAYING,
-  GAME_STATUS_MSG_PREPARE,
-  GAME_STATUS_MSG_SUSPENDED,
-  SESSION_GAME_DATA,
-  SESSION_USER_DATA
+  MSG_ERROR,
+  MSG_SESSION_GAME_DATA,
+  MSG_SESSION_USER_DATA
 } from "constants/SocketMessages";
 import { generateRandomKey, isGameCode, isUserCode, isUserGameNumber } from 'helpers'
 import { connectToGameByCodesMsg, guessMsg, setNumberForUserInGameMsg } from 'types/SocketMessages.ts';
+import { GameStatus } from 'constants/GameStatus.ts';
+
 
 const NUMBER_OF_PLAYERS = 2
 
@@ -40,17 +38,17 @@ const messageHandler = (io: Server, socket: Socket) => {
     if (haveAllUsersJoined(users)) {
       if (haveAllUsersTheirNumberSet(users)) {
         if (isGameConcluded(users)) {
-          return GAME_STATUS_MSG_CONCLUDED
+          return GameStatus.CONCLUDED
         }
         if (areAllUsersConnected(users)) {
-          return GAME_STATUS_MSG_PLAYING
+          return GameStatus.PLAYING
         }
-        return GAME_STATUS_MSG_SUSPENDED
+        return GameStatus.SUSPENDED
       } else {
-        return GAME_STATUS_MSG_PREPARE
+        return GameStatus.PREPARE
       }
     } else {
-      return GAME_STATUS_MSG_JOINING
+      return GameStatus.JOINING
     }
   }
   const getUserGuessReport = (game: Game) => {
@@ -62,7 +60,10 @@ const messageHandler = (io: Server, socket: Socket) => {
         , Number.MAX_SAFE_INTEGER)
 
       return users.reduce((collection, {codeHash, guesses}) => {
-        return {...collection, [codeHash]: {numberOfGuessesMade: guesses.length, visibleGuesses: guesses.slice(0, numberOfMutualGuesses)}}
+        return {
+          ...collection,
+          [codeHash]: {numberOfGuessesMade: guesses.length, visibleGuesses: guesses.slice(0, numberOfMutualGuesses)}
+        }
       }, {})
     }
 
@@ -90,20 +91,22 @@ const messageHandler = (io: Server, socket: Socket) => {
   }
 
   const emitter = {
-    sessionPrivateUserData: () => {
-      const {user} = db.getUserAndGameBySocketId(socket.id)
+    sessionPrivateUserData: (userCode: UserCode) => {
+      // const {user} = db.getUserAndGameBySocketId(socket.id)
+      const {user} = db.getUserAndGameByUserCode(userCode)
       if (!user) {
         emitter.error('User not found', 'user_not_found')
         return
       }
 
       const responseData = {...user, codeHash: Md5.hashStr(user.code)}
-      socket.emit(SESSION_USER_DATA, responseData)
+      socket.emit(MSG_SESSION_USER_DATA, responseData)
 
-      console.log(SESSION_USER_DATA, responseData)
+      // console.log(SESSION_USER_DATA, responseData)
     },
-    sessionPublicGameData: () => {
-      const {game} = db.getUserAndGameBySocketId(socket.id)
+    sessionPublicGameData: (userCode: UserCode) => {
+      // const {game} = db.getUserAndGameBySocketId(socket.id)
+      const {game} = db.getUserAndGameByUserCode(userCode)
       if (!game) {
         return emitter.error('User or game not found', 'user_or_game_not_found')
       }
@@ -120,17 +123,23 @@ const messageHandler = (io: Server, socket: Socket) => {
         usersGuessList: getUserGuessReport(game)
       }
 
-      io.to(gameCode).emit(SESSION_GAME_DATA, responseData)
+      io.to(gameCode).emit(MSG_SESSION_GAME_DATA, responseData)
 
-      console.log(SESSION_GAME_DATA, responseData)
+      // console.log(SESSION_GAME_DATA, responseData)
     },
     error: (text: string, key: string = 'generic') => {
-      socket.emit(ERROR_MESSAGE, {text, key})
+      socket.emit(MSG_ERROR, {text, key})
     }
   }
 
   return {
-    connectToGameByCodes: ({gameCode: givenGameCode, userCode: givenUserCode, isJoiningGame}: connectToGameByCodesMsg) => {
+    connectToGameByCodes: (
+      {
+        gameCode: givenGameCode,
+        userCode: givenUserCode,
+        isJoiningGame
+      }: connectToGameByCodesMsg
+    ) => {
       if (givenGameCode && !isGameCode(givenGameCode)) {
         emitter.error('Game code is invalid', 'invalid_game_code')
         return false
@@ -149,41 +158,50 @@ const messageHandler = (io: Server, socket: Socket) => {
       const userCode = givenUserCode || generateRandomKey()
 
       void socket.join(gameCode)
-      if (db.registerUserToRoom({gameCode, userCode, socketId: socket.id})) {
-        emitter.sessionPublicGameData()
-        emitter.sessionPrivateUserData()
+      const {user} = db.registerUserToGame({gameCode, userCode, socketId: socket.id})
+      if (user) {
+        const { code } = user
+        emitter.sessionPublicGameData(code)
+        emitter.sessionPrivateUserData(code)
         return
       }
       return emitter.error('Game code is invalid', 'invalid_game_code')
     },
-    setNumberForUserInGame: ({number}: setNumberForUserInGameMsg) => {
+    setNumberForUserInGame: ({number, userCode}: setNumberForUserInGameMsg) => {
       if (number == undefined || !isUserGameNumber(number)) {
         return emitter.error('Invalid number', 'invalid_user_game_number')
       }
 
-      const {game} = db.getUserAndGameBySocketId(socket.id)
+      const {game} = db.getUserAndGameByUserCode(userCode)
       if (!game) {
         return emitter.error('User or game not found', 'user_or_game_not_found')
       }
 
-      if (GAME_STATUS_MSG_PREPARE != getGameStatus(game)) {
+      if (getGameStatus(game) != GameStatus.PREPARE) {
         return emitter.error('It\'s not game preparation phase', 'user_or_game_invalid_state')
       }
 
-      if (db.setUserGameNumberByUserSocketId(socket.id, number)) {
-        emitter.sessionPublicGameData()
-        emitter.sessionPrivateUserData()
+      if (db.setUserGameNumberByUserCode(userCode, number)) {
+        emitter.sessionPublicGameData(userCode)
+        emitter.sessionPrivateUserData(userCode)
         return
       }
       emitter.error('Cannot find user', 'cannot_find_user')
     },
     disconnectUserFromGame: () => {
-      if (db.setUserGameConnectionStatusBySocketId(socket.id, UserStatus.DISCONNECTED)) {
-        return emitter.sessionPublicGameData()
-      }
+      const collection = db.getUsersAndGamesListBySocketId(socket.id)
+      collection
+        .filter(({user}) => user?.status != UserStatus.DISCONNECTED)
+        .map(({user}) => {
+          if (user) {
+            const {code} = user
+            db.setUserGameConnectionStatusByUserCode(code, UserStatus.DISCONNECTED)
+            emitter.sessionPublicGameData(code)
+          }
+        })
     },
-    guess: ({number}: guessMsg) => {
-      const {user, game} = db.getUserAndGameBySocketId(socket.id)
+    guess: ({number, userCode}: guessMsg) => {
+      const {user, game} = db.getUserAndGameByUserCode(userCode)
       if (!game) {
         return emitter.error('Cannot find game', 'cannot_find_game')
       }
@@ -208,8 +226,8 @@ const messageHandler = (io: Server, socket: Socket) => {
         const isWin = ({bulls}: Guess) => bulls == 4
         isWin(guess) && db.setUserWin(user)
 
-        emitter.sessionPublicGameData()
-        emitter.sessionPrivateUserData()
+        emitter.sessionPublicGameData(userCode)
+        emitter.sessionPrivateUserData(userCode)
         return
       }
     }

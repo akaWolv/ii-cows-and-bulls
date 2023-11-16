@@ -67,13 +67,13 @@ const StyledAnswerContainer = styled.div`
   font-weight: 300;
 `
 const breatheAnimation = keyframes`
-  0%, 33% {
+  0%, 40% {
     opacity: 1;
   }
-  33%, 66% {
+  40%, 60% {
     opacity: 0.5;
   }
-  66%, 99% {
+  60%, 99% {
     opacity: 1;
   }
 `
@@ -93,8 +93,8 @@ const StyledGuessNumber = styled.div<{ $variant?: 'primary' | 'secondary', $isHi
   color: ${({$variant}) => $variant === 'primary' ? Colors.IMP_ORANGE : Colors.IMP_DIM_WHITE };
 
   animation-name: ${({$isHighlighted}) => $isHighlighted ? breatheAnimation : 'none'};
-  animation-duration: 1.2s;
-  animation-iteration-count: infinite;
+  animation-duration: 1s;
+  animation-iteration-count: 3;
   animation-timing-function: ease-in-out;
 `
 const StyledFunctionalRow = styled.div`

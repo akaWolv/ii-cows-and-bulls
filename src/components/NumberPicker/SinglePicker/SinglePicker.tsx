@@ -23,15 +23,20 @@ const SinglePicker: React.FC<SinglePicker> = ({pattern, fieldName, jumpPreviousF
   const decreaseValue = () => {
     setValue(fieldName, String(_numberPicker(-1)), {shouldValidate: true})
   }
+
+  const deduplicateInput = (newFieldValue: string, currentValue: string) => {
+    return newFieldValue.replace(currentValue, '')
+  }
+
   const onDirectChange = (value: string) => {
     const newFieldValue = value.match(pattern) ? value : ''
     let newValue = ''
+
     if (newFieldValue.length > 0) {
       const currentValue = _getCurrentFieldNumericValue()
 
       // reduce to one digit
-      newValue = newFieldValue.length > 1 ? newFieldValue.replace(String(currentValue), '') : newFieldValue
-
+      newValue = newFieldValue.length > 1 ? deduplicateInput(newFieldValue, String(currentValue)) : newFieldValue
       if (currentValue === Number(newValue)) {
         // same number do not change
         // if value is set jump to next
@@ -104,8 +109,8 @@ const SinglePicker: React.FC<SinglePicker> = ({pattern, fieldName, jumpPreviousF
             {...field}
             inputRef={ref}
             onChange={(e) => {
+              // field.onChange(e)
               onDirectChange(e.target.value)
-              field.onChange(e)
             }}
             onKeyDown={onKeyDown}
             onBlur={() => {

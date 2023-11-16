@@ -15,8 +15,8 @@ import ImpLogo from 'components/ImpLogo';
 import { StyledPageContainer } from 'pages/pages.styled';
 import SocketContext from 'context/SocketContext.ts';
 import {
-  CONNECT_TO_GAME_BY_CODES,
-  ERROR_MESSAGE,
+  MSG_CONNECT_TO_GAME_BY_CODES,
+  MSG_ERROR,
 } from "constants/SocketMessages.ts";
 import { isGameCode } from 'helpers';
 import SessionController from 'controllers/SessionController.tsx';
@@ -40,7 +40,7 @@ const JoinGame: React.FC = () => {
   const sendConnectionMessage = () => {
     setIsConnecting(true)
     socket.emit(
-      CONNECT_TO_GAME_BY_CODES,
+      MSG_CONNECT_TO_GAME_BY_CODES,
       {userCode: urlUserCode, gameCode, isJoiningGame: true} as connectToGameByCodesMsg
     );
   }
@@ -53,10 +53,10 @@ const JoinGame: React.FC = () => {
       }
     }
 
-    socket.on(ERROR_MESSAGE, handleErrorMessage);
+    socket.on(MSG_ERROR, handleErrorMessage);
 
     return () => {
-      socket.off(ERROR_MESSAGE, handleErrorMessage);
+      socket.off(MSG_ERROR, handleErrorMessage);
     };
   }, []);
 
@@ -64,7 +64,7 @@ const JoinGame: React.FC = () => {
     const gameCode = String(urlGameCode)
     if (isGameCode(gameCode)) {
       setGameCode(gameCode)
-      sendConnectionMessage()
+      // sendConnectionMessage()
     }
   }, []);
 

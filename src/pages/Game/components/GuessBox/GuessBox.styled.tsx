@@ -32,6 +32,7 @@ const StyledResultBox = styled.div<{
   align-items: flex-start; 
   color: ${({$isWin}) => $isWin ? Colors.IMP_GREEN_WIN : Colors.IMP_RED_BAD};
   font-weight: 300 !important;
+  margin-top: 5px;
 `
 export {
   StyledHr,

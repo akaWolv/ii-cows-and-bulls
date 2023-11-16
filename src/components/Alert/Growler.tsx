@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react'
 import { Alert, AlertColor, AlertTitle } from '@mui/material';
-import { ERROR_MESSAGE } from "constants/SocketMessages.ts";
+import { MSG_ERROR } from "constants/SocketMessages.ts";
 import SocketContext from 'context/SocketContext.ts';
 import { StyledAlertContainer } from './Growler.styled.tsx';
 
@@ -23,10 +23,10 @@ const Growler: React.FC<Props> = () => {
       setMessage(text || 'Error occurred')
       setTimeout(() => { setIsVisible(false) }, 4000)
     }
-    socket.on(ERROR_MESSAGE, handleErrorMessage);
+    socket.on(MSG_ERROR, handleErrorMessage);
 
     return () => {
-      socket.off(ERROR_MESSAGE, handleErrorMessage);
+      socket.off(MSG_ERROR, handleErrorMessage);
     };
   }, []);
 

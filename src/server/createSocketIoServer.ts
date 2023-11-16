@@ -2,7 +2,7 @@ import http from 'http';
 import { Server as ServerIO } from 'socket.io';
 import { instrument } from '@socket.io/admin-ui';
 import * as core from 'express-serve-static-core';
-import { CONNECT_TO_GAME_BY_CODES, GUESS, QUIT_GAME, SET_NUMBER_FOR_USER_IN_GAME } from 'constants/SocketMessages.ts';
+import { MSG_CONNECT_TO_GAME_BY_CODES, MSG_GUESS, MSG_QUIT_GAME, MSG_SET_NUMBER_FOR_USER_IN_GAME } from 'constants/SocketMessages.ts';
 import messageHandler from 'server/messageHandler.ts';
 import { connectToGameByCodesMsg, guessMsg, setNumberForUserInGameMsg } from 'types/SocketMessages.ts';
 
@@ -24,19 +24,19 @@ const createSocketIoServer = ({app}: Params) => {
 
     console.log('a user connected');
 
-    socket.on(CONNECT_TO_GAME_BY_CODES, (msg) => {
+    socket.on(MSG_CONNECT_TO_GAME_BY_CODES, (msg) => {
       handle.connectToGameByCodes(msg as connectToGameByCodesMsg)
     });
 
-    socket.on(SET_NUMBER_FOR_USER_IN_GAME, (msg) => {
+    socket.on(MSG_SET_NUMBER_FOR_USER_IN_GAME, (msg) => {
       handle.setNumberForUserInGame(msg as setNumberForUserInGameMsg)
     });
 
-    socket.on(GUESS, (msg) => {
+    socket.on(MSG_GUESS, (msg) => {
       handle.guess(msg as guessMsg)
     });
 
-    socket.on(QUIT_GAME, () => {
+    socket.on(MSG_QUIT_GAME, () => {
       handle.disconnectUserFromGame()
       console.log('user quit game');
     });
