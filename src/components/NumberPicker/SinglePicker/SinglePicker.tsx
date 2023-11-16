@@ -109,7 +109,7 @@ const SinglePicker: React.FC<SinglePicker> = ({pattern, fieldName, jumpPreviousF
             {...field}
             inputRef={ref}
             onChange={(e) => {
-              // field.onChange(e)
+              // field.onChange(e) - it was broken... somehow
               onDirectChange(e.target.value)
             }}
             onKeyDown={onKeyDown}
