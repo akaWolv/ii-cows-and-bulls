@@ -8,7 +8,7 @@ import {
   MSG_SESSION_GAME_DATA,
   MSG_SESSION_USER_DATA
 } from "constants/SocketMessages";
-import { generateRandomKey, isGameCode, isUserCode, isUserGameNumber } from 'helpers'
+import { isGameCode, isUserCode, isUserGameNumber } from 'helpers'
 import { connectToGameByCodesMsg, guessMsg, setNumberForUserInGameMsg } from 'types/SocketMessages.ts';
 import { GameStatus } from 'constants/GameStatus.ts';
 
@@ -36,20 +36,19 @@ const messageHandler = (io: Server, socket: Socket) => {
     }
 
     if (haveAllUsersJoined(users)) {
-      if (haveAllUsersTheirNumberSet(users)) {
-        if (isGameConcluded(users)) {
-          return GameStatus.CONCLUDED
-        }
-        if (areAllUsersConnected(users)) {
-          return GameStatus.PLAYING
-        }
+      if (isGameConcluded(users)) {
+        return GameStatus.CONCLUDED
+      }
+      if (!areAllUsersConnected(users)) {
         return GameStatus.SUSPENDED
-      } else {
+      }
+      if (!haveAllUsersTheirNumberSet(users)) {
         return GameStatus.PREPARE
       }
-    } else {
-      return GameStatus.JOINING
+      return GameStatus.PLAYING
     }
+
+    return GameStatus.JOINING
   }
   const getUserGuessReport = (game: Game) => {
     const {users} = game
@@ -101,8 +100,6 @@ const messageHandler = (io: Server, socket: Socket) => {
 
       const responseData = {...user, codeHash: Md5.hashStr(user.code)}
       socket.emit(MSG_SESSION_USER_DATA, responseData)
-
-      // console.log(SESSION_USER_DATA, responseData)
     },
     sessionPublicGameData: (userCode: UserCode) => {
       // const {game} = db.getUserAndGameBySocketId(socket.id)
@@ -125,7 +122,6 @@ const messageHandler = (io: Server, socket: Socket) => {
 
       io.to(gameCode).emit(MSG_SESSION_GAME_DATA, responseData)
 
-      // console.log(SESSION_GAME_DATA, responseData)
     },
     error: (text: string, key: string = 'generic') => {
       socket.emit(MSG_ERROR, {text, key})
@@ -151,14 +147,17 @@ const messageHandler = (io: Server, socket: Socket) => {
 
       const fixedGivenGameCode = givenGameCode ? givenGameCode.toUpperCase() : undefined
       if (isJoiningGame && (!fixedGivenGameCode || !db.getGameByCode(fixedGivenGameCode))) {
-        return emitter.error('Game code is invalid', 'invalid_game_code')
+        return emitter.error('Game not found', 'game_not_found')
       }
 
-      const gameCode = fixedGivenGameCode || generateRandomKey()
-      const userCode = givenUserCode || generateRandomKey()
+      const gameCode = fixedGivenGameCode
+      const userCode = givenUserCode
 
-      void socket.join(gameCode)
-      const {user} = db.registerUserToGame({gameCode, userCode, socketId: socket.id})
+      const {game, user} = db.registerUserToGame({gameCode, userCode, socketId: socket.id})
+      if (game) {
+        const { code } = game
+        void socket.join(code)
+      }
       if (user) {
         const { code } = user
         emitter.sessionPublicGameData(code)

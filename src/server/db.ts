@@ -13,9 +13,10 @@ import {
 import { UserStatus } from 'constants/UserStatus'
 import { Md5 } from 'ts-md5'
 import { resolve } from 'path'
+import { generateRandomKey } from 'helpers';
 
 type UserAndGameData = { user?: User, game?: Game }
-export type registerUserToRoom = { gameCode: GameCode, userCode: UserCode, socketId: SocketId }
+export type registerUserToRoom = { socketId: SocketId, gameCode?: GameCode, userCode?: UserCode }
 
 const NUMBER_OF_PLAYERS = 2
 
@@ -34,7 +35,8 @@ setInterval(() => {
 }, 10 * 1000)
 
 const dbHandler = () => {
-  const createGame = (code: GameCode): Game => {
+  const createGame = (): Game => {
+    const code = generateRandomKey()
     console.log('createGame', code)
     const newRoom = {code, users: []}
     STORE.games.push(newRoom)
@@ -55,8 +57,8 @@ const dbHandler = () => {
     console.log('getGameByCode', code)
     return STORE.games.find(({code: storedCode}) => storedCode === code)
   }
-  const registerUserToGame = ({gameCode, userCode, socketId}: registerUserToRoom): UserAndGameData => {
-    const game = getGameByCode(gameCode) || createGame(gameCode)
+  const registerUserToGame = ({socketId, gameCode, userCode}: registerUserToRoom): UserAndGameData => {
+    const game = (gameCode && getGameByCode(gameCode)) || createGame()
     if (game.users && game.users.length > 0) {
       if (userCode) {
         const userToReconnect = game.users.find(({code}) => code === userCode)
@@ -67,6 +69,7 @@ const dbHandler = () => {
         }
       } else {
         const disconnectedUsers = game.users.filter(({status}) => status === UserStatus.DISCONNECTED)
+        console.log(disconnectedUsers)
         if (disconnectedUsers.length == 1) {
           const userToReplace = disconnectedUsers[0]
           userToReplace.id = socketId
@@ -83,7 +86,7 @@ const dbHandler = () => {
     }
 
     if (game.users.length < NUMBER_OF_PLAYERS) {
-      const user = createNewUser(socketId, userCode)
+      const user = createNewUser(socketId, generateRandomKey())
       game.users.push(user)
       return { game, user }
     }

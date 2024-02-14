@@ -1,4 +1,5 @@
 import { UserStatus } from 'constants/UserStatus.ts';
+import { GameStatus } from 'constants/GameStatus.ts';
 
 export type UserCode = string
 export type SocketId = string
@@ -24,7 +25,7 @@ export type SingleUserGuessReport = {
   visibleGuesses: Guess[]
 }
 export type SessionGameData = {
-  status: string
+  status: GameStatus
   code: GameCode
   usersHashList: CodeHash[]
   connectedHashList: CodeHash[]

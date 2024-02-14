@@ -71,12 +71,13 @@ const SessionController: React.FC<Props> = ({children}) => {
     if (!gameCode || !gameStatus || !userCode) {
       return
     }
+
     switch (gameStatus) {
       case GameStatus.JOINING:
         if (location.pathname.startsWith('/new')) {
-          navigate(`/new/connecting/${gameCode}/${userCode}`)
+          navigate(`/new/connecting/${gameCode}/${userCode}`, { replace: true })
         } else {
-          navigate(`/join/connecting/${gameCode}/${userCode}`)
+          navigate(`/join/connecting/${gameCode}/${userCode}`, { replace: true })
         }
         break;
       case GameStatus.NOT_EXIST:
@@ -87,8 +88,12 @@ const SessionController: React.FC<Props> = ({children}) => {
         break;
       case GameStatus.PLAYING:
       case GameStatus.CONCLUDED:
-      case GameStatus.SUSPENDED:
         navigate(`/game/${gameCode}/${userCode}`)
+        break;
+      case GameStatus.SUSPENDED:
+        if (location.pathname.startsWith('/pick-a-number')) {
+          navigate(`/new/connecting/${gameCode}/${userCode}`)
+        }
         break;
     }
   }

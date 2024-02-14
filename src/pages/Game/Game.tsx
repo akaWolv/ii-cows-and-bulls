@@ -177,7 +177,7 @@ const Game: React.FC = () => {
 
         <FormProvider {...formMethods}>
           <form onSubmit={formMethods.handleSubmit(onSubmit)}>
-            <StyledPickerContainer $disabled={!isGameActive}>
+            <StyledPickerContainer>
               <GameNumberPicker
                 isGuessingTime={isGameActive}
                 isPlayerPickedNumber={isPlayerPickedNumber}

@@ -8,7 +8,6 @@ import { StyledButtonContainer, StyledRules, StyledPaper } from './Prepare.style
 import ImpLogo from 'components/ImpLogo';
 import NumberPicker from 'components/NumberPicker';
 import { PICKER } from 'constants/Settings';
-import SessionController from 'controllers/SessionController.tsx';
 import { MSG_SET_NUMBER_FOR_USER_IN_GAME } from 'constants/SocketMessages.ts';
 import SocketContext from 'context/SocketContext.ts';
 import SessionContext from 'context/SessionContext.ts';
@@ -69,41 +68,39 @@ const Prepare: React.FC = () => {
   }
 
   return (
-    <SessionController>
-      <FormProvider {...formMethods}>
-        <form onSubmit={formMethods.handleSubmit(onSubmit)}>
-          <StyledPageContainer>
-            <ImpLogo/>
-            <Typography gutterBottom={true} variant="h2">Pick your number</Typography>
+    <FormProvider {...formMethods}>
+      <form onSubmit={formMethods.handleSubmit(onSubmit)}>
+        <StyledPageContainer>
+          <ImpLogo/>
+          <Typography gutterBottom={true} variant="h2">Pick your number</Typography>
 
-            <StyledPaper elevation={10}>
-              <StyledRules gutterBottom={true} variant="subtitle2">
-                <b><u>Rules</u></b> <br/>
-                Number cannot start with 0. <br/>
-                Digits cannot repeat.
-              </StyledRules>
-            </StyledPaper>
+          <StyledPaper elevation={10}>
+            <StyledRules gutterBottom={true} variant="subtitle2">
+              <b><u>Rules</u></b> <br/>
+              Number cannot start with 0. <br/>
+              Digits cannot repeat.
+            </StyledRules>
+          </StyledPaper>
 
-            <div style={{width: '80%'}}>
-              <NumberPicker pickerSettings={PICKER}/>
-            </div>
+          <div style={{width: '80%'}}>
+            <NumberPicker pickerSettings={PICKER}/>
+          </div>
 
-            <StyledButtonContainer>
-              <Button
-                type="submit"
-                size="large"
-                fullWidth
-                variant="contained"
-                disabled={!isValid || isSameNumber}
-              >
-                {renderButtonText()}
-              </Button>
-            </StyledButtonContainer>
-            {registeredNumber && 'Now wait for opponent to pick number...'}
-          </StyledPageContainer>
-        </form>
-      </FormProvider>
-    </SessionController>
+          <StyledButtonContainer>
+            <Button
+              type="submit"
+              size="large"
+              fullWidth
+              variant="contained"
+              disabled={!isValid || isSameNumber}
+            >
+              {renderButtonText()}
+            </Button>
+          </StyledButtonContainer>
+          {registeredNumber && 'Now wait for opponent to pick number...'}
+        </StyledPageContainer>
+      </form>
+    </FormProvider>
   )
 }
 

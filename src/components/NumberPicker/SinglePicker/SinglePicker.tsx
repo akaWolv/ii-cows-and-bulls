@@ -14,7 +14,11 @@ interface SinglePicker {
   jumpNextField: () => void
 }
 
-const SinglePicker: React.FC<SinglePicker> = ({pattern, fieldName, jumpPreviousField, jumpNextField}: SinglePicker) => {
+interface Clickable {
+  handleClick: () => void
+}
+
+const SinglePicker: React.FC<SinglePicker & Clickable> = ({pattern, fieldName, jumpPreviousField, jumpNextField}: SinglePicker) => {
   const {control, setValue, watch} = useFormContext();
 
   const increaseValue = () => {

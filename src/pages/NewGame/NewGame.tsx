@@ -4,19 +4,16 @@ import { Button, Skeleton, Typography } from '@mui/material'
 
 import SocketContext from 'context/SocketContext';
 
-import {
-  StyledPaper,
-  StyledCircularProgress,
-  StyledStatusContainer,
-  StyledCodeTypography,
-} from './NewGame.styled';
+import { StyledCircularProgress, StyledCodeTypography, StyledPaper, StyledStatusContainer } from './NewGame.styled';
 
 import ImpLogo from 'components/ImpLogo';
 import { StyledPageContainer } from 'pages/pages.styled';
-import {
-  MSG_CONNECT_TO_GAME_BY_CODES
-} from 'constants/SocketMessages.ts';
+import { MSG_CONNECT_TO_GAME_BY_CODES } from 'constants/SocketMessages.ts';
 import { isGameCode, isUserCode } from 'helpers';
+import SessionContext from 'context/SessionContext.ts';
+import { GameStatus } from 'constants/GameStatus.ts';
+import StatusIconSuspended from 'components/StatusIconSuspended';
+import CopyToClipboardButton from 'components/CopyToClipboardButton';
 
 type UrlParams = {
   gameCode?: string
@@ -27,6 +24,8 @@ const NewGame: React.FC = () => {
   const navigate = useNavigate();
   const {gameCode: urlGameCode, userCode: urlUserCode}: UrlParams = useParams()
   const socket = useContext(SocketContext);
+  const {game} = useContext(SessionContext);
+  const {status} = game;
 
   const [gameCode, setGameCode] = useState(urlGameCode || '');
 
@@ -46,10 +45,11 @@ const NewGame: React.FC = () => {
 
   return (
     <StyledPageContainer>
+      <StatusIconSuspended />
       <ImpLogo/>
-      <Typography gutterBottom={true} variant="h2">New game</Typography>
+      <Typography gutterBottom={true} variant="h2">{status == GameStatus.SUSPENDED ? 'Waiting...' : 'New game'}</Typography>
       <Typography gutterBottom={true} variant="subtitle1">
-        Game Code:
+        Ask opponent to join by this code:
       </Typography>
       <StyledPaper elevation={10}>
         <StyledCodeTypography variant="h2">
@@ -59,10 +59,8 @@ const NewGame: React.FC = () => {
         </StyledCodeTypography>
       </StyledPaper>
       <StyledStatusContainer>
-        <Typography gutterBottom={true} variant="subtitle2">
-          Ask opponent to join your game <br />by providing the code above
-        </Typography>
-        <StyledCircularProgress size={65} thickness={1}/>
+        <CopyToClipboardButton textToCopy={`${location.origin}/join/${gameCode}`} buttonText="Copy link" />
+        <StyledCircularProgress size={65} thickness={1} sx={{ mt:2 }}/>
         {/*<Typography gutterBottom={true} variant="subtitle2">*/}
         {/*  Enough waiting?*/}
         {/*</Typography>*/}
