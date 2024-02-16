@@ -11,6 +11,7 @@ const StyledHeaderContainer = styled.div`
     justify-content: space-between;
 `
 const GuessBoxesContainer = styled.div`
+    //background-color: red;
     width: 100%;
 
     flex-grow: 2;
