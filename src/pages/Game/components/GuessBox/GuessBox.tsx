@@ -95,7 +95,7 @@ const GuessBox: React.FC<Props> = (
                     {number}
                   </StyledGuessNumber>
                   <StyledAnswerContainer>
-                    {bAnswerList.length + cAnswerList.length === 0 && <i>empty</i>}
+                    {bAnswerList.length + cAnswerList.length === 0 && <i>no hints...</i>}
                     {
                       bAnswerList.map((k) =>
                         <CheckCircleTwoToneIcon key={k} fontSize="small" sx={{color: bColor}}/>

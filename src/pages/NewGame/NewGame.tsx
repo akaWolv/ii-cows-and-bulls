@@ -12,7 +12,7 @@ import { MSG_CONNECT_TO_GAME_BY_CODES } from 'constants/SocketMessages.ts';
 import { isGameCode, isUserCode } from 'helpers';
 import SessionContext from 'context/SessionContext.ts';
 import { GameStatus } from 'constants/GameStatus.ts';
-import StatusIconSuspended from 'components/StatusIconSuspended';
+import ConnectionStatus from 'components/ConnectionStatus';
 import CopyToClipboardButton from 'components/CopyToClipboardButton';
 
 type UrlParams = {
@@ -45,7 +45,7 @@ const NewGame: React.FC = () => {
 
   return (
     <StyledPageContainer>
-      <StatusIconSuspended />
+      <ConnectionStatus />
       <ImpLogo/>
       <Typography gutterBottom={true} variant="h2">{status == GameStatus.SUSPENDED ? 'Waiting...' : 'New game'}</Typography>
       <Typography gutterBottom={true} variant="subtitle1">
@@ -59,7 +59,7 @@ const NewGame: React.FC = () => {
         </StyledCodeTypography>
       </StyledPaper>
       <StyledStatusContainer>
-        <CopyToClipboardButton textToCopy={`${location.origin}/join/${gameCode}`} buttonText="Copy link" />
+        <CopyToClipboardButton textToCopy={`${location.origin}/join/${gameCode}`} buttonText="Copy game link" />
         <StyledCircularProgress size={65} thickness={1} sx={{ mt:2 }}/>
         {/*<Typography gutterBottom={true} variant="subtitle2">*/}
         {/*  Enough waiting?*/}

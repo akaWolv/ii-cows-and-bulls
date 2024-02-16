@@ -15,6 +15,8 @@ import { FormValues } from 'types/CommonTypes';
 import Colors from 'constants/Colors.ts';
 import CheckIcon from '@mui/icons-material/Check';
 import { setNumberForUserInGameMsg } from 'types/SocketMessages.ts';
+import { StyledContainer } from 'pages/Game/components/components.styled.tsx'
+import ConnectionStatus from 'components/ConnectionStatus'
 
 const Prepare: React.FC = () => {
   const socket = useContext(SocketContext);
@@ -68,39 +70,42 @@ const Prepare: React.FC = () => {
   }
 
   return (
-    <FormProvider {...formMethods}>
-      <form onSubmit={formMethods.handleSubmit(onSubmit)}>
-        <StyledPageContainer>
-          <ImpLogo/>
-          <Typography gutterBottom={true} variant="h2">Pick your number</Typography>
+    <StyledContainer>
+      <FormProvider {...formMethods}>
+        <form onSubmit={formMethods.handleSubmit(onSubmit)}>
+          <StyledPageContainer>
+            <ConnectionStatus />
+            <ImpLogo/>
+            <Typography gutterBottom={true} variant="h2">Pick your number</Typography>
 
-          <StyledPaper elevation={10}>
-            <StyledRules gutterBottom={true} variant="subtitle2">
-              <b><u>Rules</u></b> <br/>
-              Number cannot start with 0. <br/>
-              Digits cannot repeat.
-            </StyledRules>
-          </StyledPaper>
+            <StyledPaper elevation={10}>
+              <StyledRules gutterBottom={true} variant="subtitle2">
+                <b><u>Rules</u></b> <br/>
+                Number cannot start with 0. <br/>
+                Digits cannot repeat.
+              </StyledRules>
+            </StyledPaper>
 
-          <div style={{width: '80%'}}>
-            <NumberPicker pickerSettings={PICKER}/>
-          </div>
+            <div style={{width: '85%'}}>
+              <NumberPicker pickerSettings={PICKER}/>
+            </div>
 
-          <StyledButtonContainer>
-            <Button
-              type="submit"
-              size="large"
-              fullWidth
-              variant="contained"
-              disabled={!isValid || isSameNumber}
-            >
-              {renderButtonText()}
-            </Button>
-          </StyledButtonContainer>
-          {registeredNumber && 'Now wait for opponent to pick number...'}
-        </StyledPageContainer>
-      </form>
-    </FormProvider>
+            <StyledButtonContainer>
+              <Button
+                type="submit"
+                size="large"
+                fullWidth
+                variant="contained"
+                disabled={!isValid || isSameNumber}
+              >
+                {renderButtonText()}
+              </Button>
+            </StyledButtonContainer>
+            {registeredNumber && 'Now wait for opponent to pick number...'}
+          </StyledPageContainer>
+        </form>
+      </FormProvider>
+    </StyledContainer>
   )
 }
 

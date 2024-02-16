@@ -3,6 +3,7 @@ import styled from 'styled-components'
 const StyledNumberPickerContainer = styled.div<{
   $disabled?: boolean
 }>`
+  padding: 5px 0 0 0;
   width: 100%;
   display: flex;
   align-items: center;

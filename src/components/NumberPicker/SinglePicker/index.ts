@@ -1,1 +1,1 @@
-export { default } from './SinglePicker'
+export { SinglePicker } from './SinglePicker'

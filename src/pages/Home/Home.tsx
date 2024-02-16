@@ -9,48 +9,51 @@ import { useCookies } from 'react-cookie';
 import { LAST_GAME_CODE, LAST_USER_CODE } from 'constants/CookiesName.ts';
 
 const Home: React.FC = () => {
-  const [{lastGameCode, lastUserCode}] = useCookies([LAST_GAME_CODE, LAST_USER_CODE]);
+  const [{ lastGameCode, lastUserCode }] = useCookies([LAST_GAME_CODE, LAST_USER_CODE]);
   const navigate = useNavigate();
 
   return (
     <StyledPageContainer $dense={true}>
-      <ImpLogo/>
-      <Typography gutterBottom={true} variant="h1">Cows and Bulls</Typography>
-      <Typography gutterBottom={true} variant="subtitle2">
+      <ImpLogo />
+      <div style={{textAlign: 'center'}}>
+      <Typography variant="h1">Cows and Bulls</Typography>
+      <Typography variant="subtitle2">
         by <a href={'http://indieimp.com'}>IndieImp.com</a>
       </Typography>
+      </div>
       <StyledButtonContainer>
         <Button
           size="large"
-          variant="contained"
+          variant="outlined"
+          fullWidth
           onClick={() => {
             navigate(`/new`)
           }}>
-          Start Game
+          NEW GAME
         </Button>
         <Button
           size="large"
-          variant="contained"
+          variant="outlined"
+          fullWidth
           onClick={() => {
             navigate('/join')
           }}>
-          Join Game
+          JOIN GAME
         </Button>
-      </StyledButtonContainer>
-      {
-        lastUserCode && lastGameCode && (
-          <StyledButtonContainer>
+        {
+          lastUserCode && lastGameCode && (
             <Button
               size="large"
-              variant="outlined"
+              variant="contained"
+              fullWidth
               onClick={() => {
                 navigate(`/game/${lastGameCode}/${lastUserCode}`)
               }}>
-              Join your last game
+              JOIN LAST GAME
             </Button>
-          </StyledButtonContainer>
-        )
-      }
+          )
+        }
+      </StyledButtonContainer>
     </StyledPageContainer>
   )
 }

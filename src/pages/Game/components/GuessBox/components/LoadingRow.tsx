@@ -19,7 +19,7 @@ const LoadingRow: React.FC<Props> = ({ isGuessingTime = false, isNumberPicked = 
     return null
   }
 
-  const animation = isNumberPicked ? 'pulse' : false
+  const animation = isNumberPicked ? 'wave' : false
   return (
     <StyledFunctionalRow>
       <StyledGuessNumber>
@@ -30,10 +30,10 @@ const LoadingRow: React.FC<Props> = ({ isGuessingTime = false, isNumberPicked = 
         }
       </StyledGuessNumber>
       <StyledAnswerContainer>
-        <Skeleton animation={animation} variant="circular" width={16} height={16} sx={{ marginLeft: '2px'}} />
-        <Skeleton animation={animation} variant="circular" width={16} height={16} sx={{ marginLeft: '4px'}} />
-        <Skeleton animation={animation} variant="circular" width={16} height={16} sx={{ marginLeft: '4px'}} />
-        <Skeleton animation={animation} variant="circular" width={16} height={16} sx={{ marginLeft: '4px'}} />
+        <Skeleton animation={animation} variant="circular" width={16} height={16} sx={{ marginLeft: '2px', bgcolor: 'grey.800'}} />
+        <Skeleton animation={animation} variant="circular" width={16} height={16} sx={{ marginLeft: '4px', bgcolor: 'grey.800'}} />
+        <Skeleton animation={animation} variant="circular" width={16} height={16} sx={{ marginLeft: '4px', bgcolor: 'grey.800'}} />
+        <Skeleton animation={animation} variant="circular" width={16} height={16} sx={{ marginLeft: '4px', bgcolor: 'grey.800'}} />
       </StyledAnswerContainer>
     </StyledFunctionalRow>
 

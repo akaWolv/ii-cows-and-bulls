@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Controller, useFormContext } from "react-hook-form"
 
 import { IconButton, TextField } from '@mui/material'
@@ -7,25 +7,30 @@ import { StyledDigitPickerContainer } from './SinglePicker.styled';
 import KeyboardArrowUpRoundedIcon from '@mui/icons-material/KeyboardArrowUpRounded';
 import KeyboardArrowDownRoundedIcon from '@mui/icons-material/KeyboardArrowDownRounded';
 
-interface SinglePicker {
+type Props = {
   pattern: RegExp,
   fieldName: string,
   jumpPreviousField: () => void,
   jumpNextField: () => void
+  setWarning: (text: string|boolean) => void
 }
 
-interface Clickable {
-  handleClick: () => void
-}
-
-const SinglePicker: React.FC<SinglePicker & Clickable> = ({pattern, fieldName, jumpPreviousField, jumpNextField}: SinglePicker) => {
+export const SinglePicker: React.FC<Props> = ({pattern, fieldName, jumpPreviousField, jumpNextField, setWarning}: Props) => {
+  const [isError, setIsError] = useState<boolean>(false)
   const {control, setValue, watch} = useFormContext();
 
   const increaseValue = () => {
     setValue(fieldName, String(_numberPicker(1)), {shouldValidate: true})
+    clearWarnings()
   }
   const decreaseValue = () => {
     setValue(fieldName, String(_numberPicker(-1)), {shouldValidate: true})
+    clearWarnings()
+  }
+
+  const clearWarnings = () => {
+    setWarning(false)
+    setIsError(false)
   }
 
   const deduplicateInput = (newFieldValue: string, currentValue: string) => {
@@ -35,6 +40,7 @@ const SinglePicker: React.FC<SinglePicker & Clickable> = ({pattern, fieldName, j
   const onDirectChange = (value: string) => {
     const newFieldValue = value.match(pattern) ? value : ''
     let newValue = ''
+
 
     if (newFieldValue.length > 0) {
       const currentValue = _getCurrentFieldNumericValue()
@@ -46,6 +52,7 @@ const SinglePicker: React.FC<SinglePicker & Clickable> = ({pattern, fieldName, j
         // if value is set jump to next
         newValue.length > 0 && jumpNextField()
         setValue(fieldName, newValue, {shouldValidate: true})
+        clearWarnings()
         return
       }
 
@@ -53,12 +60,22 @@ const SinglePicker: React.FC<SinglePicker & Clickable> = ({pattern, fieldName, j
       if (!availableNumbers.includes(Number(newValue))) {
         // number is not available
         setValue(fieldName, '', {shouldValidate: true})
+        setWarning("All digits should be unique")
+        setIsError(true)
         return
       }
     }
     // if value is set jump to next
     newValue.length > 0 && jumpNextField()
     setValue(fieldName, newValue, {shouldValidate: true})
+
+    // set warning if needed
+    if (!value.match(pattern)) {
+      setWarning(`Use numbers between ${String(pattern).replace(/\/|\[|\]/g, "")}`)
+      setIsError(true)
+    } else {
+      clearWarnings()
+    }
     return
   }
   const onKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
@@ -127,6 +144,7 @@ const SinglePicker: React.FC<SinglePicker & Clickable> = ({pattern, fieldName, j
               style: {textAlign: 'center', fontSize: '2em'}
             }}
             style={{margin: '0.5em 0'}}
+            error={isError}
           />
         )}
       />

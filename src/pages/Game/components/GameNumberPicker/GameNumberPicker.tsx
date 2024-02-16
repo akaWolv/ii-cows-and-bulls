@@ -16,6 +16,7 @@ type Props = {
   isGuessingTime: boolean
   isPlayerPickedNumber: boolean
   isNumberUsedBefore: boolean
+  setWarning: (text: string|boolean) => void
 }
 
 const GameNumberPicker: React.FC<Props> = (
@@ -23,6 +24,7 @@ const GameNumberPicker: React.FC<Props> = (
     isGuessingTime,
     isPlayerPickedNumber,
     isNumberUsedBefore,
+    setWarning
   }
 ) => {
   const renderButtonContent = () => {
@@ -37,7 +39,7 @@ const GameNumberPicker: React.FC<Props> = (
 
   return (
     <>
-      <NumberPicker pickerSettings={PICKER} disabled={!isGuessingTime || isPlayerPickedNumber } />
+      <NumberPicker pickerSettings={PICKER} disabled={!isGuessingTime || isPlayerPickedNumber } setExternalWarning={setWarning} />
       <StyledButtonContainer $disabled={!isGuessingTime}>
         <StyledButton
           type="submit"

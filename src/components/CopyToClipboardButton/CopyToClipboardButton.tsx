@@ -17,7 +17,7 @@ const CopyToClipboardButton: React.FC<Props> = ({textToCopy, buttonText}) => {
       },
     );  }
   return (
-    <Button variant="outlined" size="small" endIcon={<LinkIcon />} onClick={handleOnClick}>
+    <Button variant="outlined" size="small" endIcon={<LinkIcon />} onClick={handleOnClick} sx={{textTransform: 'none'}}>
       {buttonText}
     </Button>
   );

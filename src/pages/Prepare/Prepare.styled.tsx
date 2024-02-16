@@ -3,7 +3,7 @@ import { Paper, Typography } from '@mui/material';
 import Colors from 'constants/Colors';
 
 const StyledButtonContainer = styled.div`
-  width: 80%;
+  width: 85%;
   height: 55px;
   margin-bottom: 10px;
   display: flex;

@@ -117,7 +117,7 @@ const JoinGame: React.FC = () => {
                 : null
             }
           </StyledStatusContainer>
-          <Button onClick={() => { navigate('/') }}>back to main page</Button>
+          <Button onClick={() => { navigate('/') }}>BACK TO MAIN PAGE</Button>
         </StyledPageContainer>
       </form>
     </SessionController>

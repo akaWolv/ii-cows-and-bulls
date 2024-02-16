@@ -45,6 +45,8 @@ const Game: React.FC = () => {
   const [playerWon, setPlayerWon] = useState<boolean>(false)
   const [opponentWon, setOpponentWon] = useState<boolean>(false)
 
+  const [warning, setWarning] = useState<string|boolean>(false)
+
   const formMethods = useForm<FormValues>({
     defaultValues: {digitA: '', digitB: '', digitC: '', digitD: ''}
   })
@@ -132,7 +134,7 @@ const Game: React.FC = () => {
       </StyledHeaderContainer>
       <StyledContentContainer>
         <StyledGuessHeader container style={{textAlign: 'center'}}>
-          <StyledGuessHeaderLeft item xs={6}>Your guesses</StyledGuessHeaderLeft>
+          <StyledGuessHeaderLeft item xs={6}><b>Your guesses</b></StyledGuessHeaderLeft>
           <StyledGuessHeaderRight item xs={6}>Opponents guesses</StyledGuessHeaderRight>
         </StyledGuessHeader>
         <GuessBoxesContainer>
@@ -173,6 +175,7 @@ const Game: React.FC = () => {
           isGameEnded={isGameEnded}
           playerWon={playerWon}
           opponentWon={opponentWon}
+          warning={warning}
         />
 
         <FormProvider {...formMethods}>
@@ -182,6 +185,7 @@ const Game: React.FC = () => {
                 isGuessingTime={isGameActive}
                 isPlayerPickedNumber={isPlayerPickedNumber}
                 isNumberUsedBefore={isFormNumberUsedBefore}
+                setWarning={setWarning}
               />
             </StyledPickerContainer>
           </form>

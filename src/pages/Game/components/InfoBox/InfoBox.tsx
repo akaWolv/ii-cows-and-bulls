@@ -1,8 +1,6 @@
 import React from 'react';
-import {
-  StyledInfoBox
-} from './InfoBox.styled.tsx';
-import Colors from 'constants/Colors.ts';
+import { StyledAlert } from './InfoBox.styled.tsx';
+import { AlertColor } from '@mui/material/Alert/Alert'
 
 type Props = {
   isGameActive: boolean
@@ -11,6 +9,7 @@ type Props = {
   isGameEnded: boolean
   playerWon: boolean
   opponentWon: boolean
+  warning: string | boolean
 }
 
 const InfoBox: React.FC<Props> = (
@@ -20,34 +19,40 @@ const InfoBox: React.FC<Props> = (
     didOpponentPickedNumber = false,
     isGameEnded = false,
     playerWon = false,
-    opponentWon = false
+    opponentWon = false,
+    warning = false
   }
 ) => {
-  const getText = () => {
+  const getData = (): [AlertColor, string|React.JSX.Element] => {
     switch (true) {
+      case Boolean(warning):
+        return ['error', String(warning)]
       case isGameEnded && playerWon && opponentWon:
-        return <>Game Over: <b>DRAW!</b></>
+        return ['success', <>Game Over: <b>DRAW!</b></>]
       case isGameEnded && playerWon:
-        return <>Game Over: <b>You won!</b></>
+        return ['success', <>Game Over: <b>You won!</b></>]
       case isGameEnded && opponentWon:
-        return <>Game Over: <i>You need to be faster next time.</i></>
+        return ['warning', <>Game Over: <i>You need to be faster next time.</i></>]
       case isGameEnded:
-        return <>Game Over: <i>not resolved...</i></>
+        return ['warning', <>Game Over: <i>not resolved...</i></>]
+      case isGameActive && !isNumberPicked && didOpponentPickedNumber:
+        return ['info', 'Pick a number to guess... Opponent is waiting.']
       case isGameActive && !isNumberPicked:
-        return 'Pick a number you want to guess'
+        return ['info', 'Pick a number to guess']
       case isGameActive && !didOpponentPickedNumber:
-        return 'Wait for you opponent to guess...'
+        return ['success', 'Now wait for opponent to guess...']
       case isGameActive:
-        return 'Both players picked numbers'
+        return ['success', 'Both players picked numbers']
       case !isGameActive:
-        return <span style={{color: Colors.IMP_RED_BAD, fontWeight: 400}}>Game suspended - players not connected</span>
+        return ['error', <>Game suspended - <b>all players not connected!</b></>]
       default:
-        return 'Think about possible opponents number'
+        return ['info', 'Think about possible opponents number']
     }
   }
 
+  const [severity, text] = getData()
 
-  return <StyledInfoBox elevation={1}>{getText()}</StyledInfoBox>
+  return <StyledAlert severity={severity}>{text}</StyledAlert>
 }
 
 export default InfoBox
