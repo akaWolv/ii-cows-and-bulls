@@ -9,6 +9,7 @@ import Error from './pages/Error';
 import SessionController from 'controllers/SessionController.tsx';
 import { ReactNode } from 'react';
 import AppProvider from 'common/AppProvider';
+import Admin from 'pages/Ii/Admin';
 
 function App() {
   const controller = (children: ReactNode) => {
@@ -38,6 +39,7 @@ function App() {
           <Route path={'/pick-a-number/:gameCode/:userCode'} element={controller(<Prepare/>)} />
           <Route path={'/game/:gameCode/:userCode'} element={controller(<Game/>)} />
           <Route path={'/error/:code'} element={<Error />} />
+          <Route path={'/ii/admin'} element={<Admin />} />
         </Routes>
       </BrowserRouter>
     </AppProvider>

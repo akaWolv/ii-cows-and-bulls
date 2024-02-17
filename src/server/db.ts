@@ -26,7 +26,7 @@ const NUMBER_OF_PLAYERS = 2
 //   .slice(0,3)
 //   .reverse()
 //   .join('-')
-const cache = flatCache.load('2023', resolve('./.cache'));
+const cache = flatCache.load('2024', resolve('./.cache'));
 const STORE: Store = cache.getKey('games') || {games: []}
 setInterval(() => {
   console.log('saved', STORE)
@@ -142,6 +142,8 @@ const dbHandler = () => {
     }, [] as UserAndGameData[])
   }
 
+  const getWholeStore = () => STORE
+
   return {
     addUserGuess,
     registerUserToGame,
@@ -150,7 +152,8 @@ const dbHandler = () => {
     getUserAndGameByUserCode,
     setUserWin,
     setUserGameNumberByUserCode,
-    setUserGameConnectionStatusByUserCode
+    setUserGameConnectionStatusByUserCode,
+    getWholeStore
   }
 }
 
