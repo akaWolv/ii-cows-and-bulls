@@ -61,7 +61,11 @@ const messageHandler = (io: Server, socket: Socket) => {
       return users.reduce((collection, {codeHash, guesses}) => {
         return {
           ...collection,
-          [codeHash]: {numberOfGuessesMade: guesses.length, visibleGuesses: guesses.slice(0, numberOfMutualGuesses)}
+          [codeHash]: {
+            numberOfGuessesMade: guesses.length,
+            visibleGuesses: guesses.slice(0, numberOfMutualGuesses),
+            pendingGuess: guesses.slice(numberOfMutualGuesses, numberOfMutualGuesses + 1)[0]
+          }
         }
       }, {})
     }

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useContext, useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 import { Button, Typography } from '@mui/material'
 import { StyledButtonContainer } from './Home.styled';
@@ -7,10 +7,17 @@ import { StyledPageContainer } from 'pages/pages.styled';
 import ImpLogo from 'components/ImpLogo';
 import { useCookies } from 'react-cookie';
 import { LAST_GAME_CODE, LAST_USER_CODE } from 'constants/CookiesName.ts';
+import SocketContext from 'context/SocketContext.ts'
 
 const Home: React.FC = () => {
+  const socket = useContext(SocketContext);
   const [{ lastGameCode, lastUserCode }] = useCookies([LAST_GAME_CODE, LAST_USER_CODE]);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    socket.disconnect()
+    socket.connect()
+  }, []);
 
   return (
     <StyledPageContainer $dense={true}>

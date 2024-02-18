@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import {
   Button,
-  CardActions,
   CardContent,
   IconButton,
   Modal,
@@ -36,21 +35,21 @@ const Help: React.FC = () => {
         onClose={handleClose}
       >
         <StyledCard>
-          <CardContent>
-            <Typography variant="h3" component="h3" gutterBottom={true}>
+          <CardContent style={{ height: '100%', display: 'flex', flexDirection: 'column', justifyContent: 'center'}}>
+            <Typography variant="h3" component="h3" gutterBottom>
               Rules
             </Typography>
             <Typography variant="h6" component="h6">
               Goal
             </Typography>
-            <Typography variant="body2" gutterBottom={true}>
+            <Typography variant="body2" gutterBottom>
               Each player tries to guess opponents number.
             </Typography>
 
             <Typography variant="h6" component="h6">
               Game
             </Typography>
-            <Typography variant="body2" gutterBottom={true}>
+            <Typography variant="body2" gutterBottom>
               Provide number and click 'pick" button.
               <br />
               Wait for opponent...
@@ -59,7 +58,7 @@ const Help: React.FC = () => {
             <Typography variant="h6" component="h6">
               Answer
             </Typography>
-            <Typography variant="body2" gutterBottom={true}>
+            <Typography variant="body2" gutterBottom>
               You get answer when both players will pick a guess.<br />
               Multiple hints will be provided to you.<br />
               Use them to correct your next guess.
@@ -79,19 +78,12 @@ const Help: React.FC = () => {
             <Typography variant="h6" component="h6">
               Remember
             </Typography>
-            <Typography variant="body2" gutterBottom={true}>
+            <Typography variant="body2" gutterBottom>
               You never know which digit is hint about.
             </Typography>
-          </CardContent>
-          <CardActions
-            sx={{
-                display: "flex",
-                justifyContent: "flex-end",
-                alignItems: "flex-start",
-              }}
-          >
+            <br />
             <Button variant="outlined" onClick={handleClose}>OK</Button>
-          </CardActions>
+          </CardContent>
         </StyledCard>
       </Modal>
     </>

@@ -46,6 +46,9 @@ const JoinGame: React.FC = () => {
   }
 
   useEffect(() => {
+    socket.disconnect()
+    socket.connect()
+
     const handleErrorMessage = () => {
       setIsConnecting(false)
       if (location.pathname.startsWith('/join/connecting')) {
@@ -64,7 +67,6 @@ const JoinGame: React.FC = () => {
     const gameCode = String(urlGameCode)
     if (isGameCode(gameCode)) {
       setGameCode(gameCode)
-      // sendConnectionMessage()
     }
   }, []);
 

@@ -81,6 +81,7 @@ const Prepare: React.FC = () => {
             <StyledPaper elevation={10}>
               <StyledRules gutterBottom={true} variant="subtitle2">
                 <b><u>Rules</u></b> <br/>
+                Pick 4 digits number. <br/>
                 Number cannot start with 0. <br/>
                 Digits cannot repeat.
               </StyledRules>

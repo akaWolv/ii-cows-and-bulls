@@ -21,6 +21,7 @@ import {
   StyledAnswerRowsContainer
 } from './GuessBox.styled.tsx';
 import { Guess, UserGameNumber } from 'types/CommonTypes.ts';
+import { Tooltip } from '@mui/material'
 
 type Props = {
   guessList: Guess[]
@@ -33,6 +34,7 @@ type Props = {
   variant?: 'player' | 'opponent'
   headerNumber?: UserGameNumber
   highlightedNumber?: UserGameNumber
+  pendingGuess?: Guess
 }
 
 const GuessBox: React.FC<Props> = (
@@ -46,7 +48,8 @@ const GuessBox: React.FC<Props> = (
     isTie = false,
     variant = 'player',
     headerNumber,
-    highlightedNumber
+    highlightedNumber,
+    pendingGuess
   }
 ) => {
   let cColor = '#171717'
@@ -58,6 +61,11 @@ const GuessBox: React.FC<Props> = (
 
   const getAnswerArray = (a: number) => Array.from(Array(a).keys())
 
+  const generateTooltip = (bulls: number, cows: number) => {
+    const pluralizer = (count: number) =>  1 == count ? `1 digit` : `${count} digits`;
+    return <>{pluralizer(bulls)} in right place <br /> {pluralizer(cows)} in wrong place</>
+  }
+
   return (
     <StyledContainer>
       <StyledBox elevation={8} $background="secondary">
@@ -65,24 +73,25 @@ const GuessBox: React.FC<Props> = (
           {headerNumber && <StyledHeaderTypographyNumber>{headerNumber}</StyledHeaderTypographyNumber>}
           <StyledHeaderTypographyText variant="h6">{header}</StyledHeaderTypographyText>
         </StyledHeader>
-        <StyledHr/>
+        <StyledHr />
 
         {
           isGameEnded && (
             <StyledResultBox $isWin={isWin}>
               {
                 isWin
-                  ? <><SentimentVerySatisfiedIcon/>{isTie ? 'It\'s a draw!' : variant == 'player' ? 'You won!' : 'Opponent won'}</>
-                  : <><SentimentNeutralIcon/>{variant == 'player' ? 'You lost' : 'Opponent lost'}</>
+                  ? <>
+                    <SentimentVerySatisfiedIcon />{isTie ? 'It\'s a draw!' : variant == 'player' ? 'You won!' : 'Opponent won'}</>
+                  : <><SentimentNeutralIcon />{variant == 'player' ? 'You lost' : 'Opponent lost'}</>
               }
             </StyledResultBox>
           )
         }
 
-        <LoadingRow isGuessingTime={isGameActive} isNumberPicked={isNumberPicked}/>
+        <LoadingRow isGuessingTime={isGameActive} isNumberPicked={isNumberPicked} pendingGuess={pendingGuess} />
         <StyledAnswerRowsContainer>
           {
-            Array.from(guessList).map(({number, bulls, cows}, id) => {
+            Array.from(guessList).map(({ number, bulls, cows }, id) => {
               const bAnswerList = getAnswerArray(bulls)
               const cAnswerList = getAnswerArray(cows)
 
@@ -94,19 +103,21 @@ const GuessBox: React.FC<Props> = (
                   >
                     {number}
                   </StyledGuessNumber>
-                  <StyledAnswerContainer>
-                    {bAnswerList.length + cAnswerList.length === 0 && <i>no hints...</i>}
-                    {
-                      bAnswerList.map((k) =>
-                        <CheckCircleTwoToneIcon key={k} fontSize="small" sx={{color: bColor}}/>
-                      )
-                    }
-                    {
-                      cAnswerList.map((k) =>
-                        <RadioButtonUncheckedOutlinedIcon key={k} fontSize="small" sx={{color: cColor}}/>
-                      )
-                    }
-                  </StyledAnswerContainer>
+                  <Tooltip title={generateTooltip(cows, bulls)} arrow placement="top-end">
+                    <StyledAnswerContainer>
+                      {bAnswerList.length + cAnswerList.length === 0 && <i>no hints...</i>}
+                      {
+                        bAnswerList.map((k) =>
+                          <CheckCircleTwoToneIcon key={k} fontSize="small" sx={{ color: bColor }} />
+                        )
+                      }
+                      {
+                        cAnswerList.map((k) =>
+                          <RadioButtonUncheckedOutlinedIcon key={k} fontSize="small" sx={{ color: cColor }} />
+                        )
+                      }
+                    </StyledAnswerContainer>
+                  </Tooltip>
                 </StyledRow>
               )
             })

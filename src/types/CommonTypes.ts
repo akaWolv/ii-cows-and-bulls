@@ -22,7 +22,8 @@ export type Store = {
 }
 export type SingleUserGuessReport = {
   numberOfGuessesMade: number,
-  visibleGuesses: Guess[]
+  visibleGuesses: Guess[],
+  pendingGuess: Guess
 }
 export type SessionGameData = {
   status: GameStatus

@@ -24,7 +24,7 @@ import { guessMsg } from 'types/SocketMessages.ts';
 import { GameStatus } from 'constants/GameStatus.ts';
 
 const Game: React.FC = () => {
-  const {game, user, isPlayerConnected, isOpponentConnected} = useContext(SessionContext);
+  const { game, user, isPlayerConnected, isOpponentConnected } = useContext(SessionContext);
   const socket = useContext(SocketContext);
 
   const [gameCode, setGameCode] = useState<GameCode>('')
@@ -35,6 +35,7 @@ const Game: React.FC = () => {
   const [playerNumberOfGuessesMade, setPlayerNumberOfGuessesMade] = useState<number>(0)
   const [opponentNumberOfGuessesMade, setOpponentNumberOfGuessesMade] = useState<number>(0)
   const [playerGuesses, setPlayerGuesses] = useState<Guess[]>([])
+  const [pendingGuess, setPendingGuess] = useState<Guess|undefined>(undefined)
   const [opponentGuesses, setOpponentGuesses] = useState<Guess[]>([])
 
   const [isPlayerPickedNumber, setIsPlayerPickedNumber] = useState<boolean>(false)
@@ -45,19 +46,19 @@ const Game: React.FC = () => {
   const [playerWon, setPlayerWon] = useState<boolean>(false)
   const [opponentWon, setOpponentWon] = useState<boolean>(false)
 
-  const [warning, setWarning] = useState<string|boolean>(false)
+  const [warning, setWarning] = useState<string | boolean>(false)
 
   const formMethods = useForm<FormValues>({
-    defaultValues: {digitA: '', digitB: '', digitC: '', digitD: ''}
+    defaultValues: { digitA: '', digitB: '', digitC: '', digitD: '' }
   })
-  const { getValues: formGetValues } = formMethods
+  const { getValues: formGetValues, reset: formReset } = formMethods
 
   useEffect(() => {
     if (Object.keys(game).length > 0 && Object.keys(user).length > 0) {
       console.log('GAME:game', game)
       console.log('GAME:user', user)
 
-      const { number, codeHash, code: userCode} = user
+      const { number, codeHash, code: userCode } = user
       const {
         usersGuessList,
         winners,
@@ -69,12 +70,13 @@ const Game: React.FC = () => {
       setGameCode(gameCode)
       setUserCode(userCode)
 
-      const {codeHash: yourCodeHash} = user
+      const { codeHash: yourCodeHash } = user
       for (const [userGuessListCodeHash, userGuessList] of Object.entries(usersGuessList)) {
-        const {numberOfGuessesMade, visibleGuesses} = userGuessList
+        const { numberOfGuessesMade, visibleGuesses, pendingGuess } = userGuessList
         if (userGuessListCodeHash === yourCodeHash) {
           setPlayerNumberOfGuessesMade(numberOfGuessesMade)
           setPlayerGuesses(visibleGuesses)
+          setPendingGuess(pendingGuess)
         } else {
           setOpponentNumberOfGuessesMade(numberOfGuessesMade)
           setOpponentGuesses(visibleGuesses)
@@ -105,23 +107,24 @@ const Game: React.FC = () => {
   }, [playerNumberOfGuessesMade, opponentNumberOfGuessesMade])
 
   const sendGuess = (number: string) => {
-    socket.emit(MSG_GUESS, {number, userCode} as guessMsg);
+    socket.emit(MSG_GUESS, { number, userCode } as guessMsg);
   }
   const onSubmit = (data: FormValues) => {
     const number = Object.values(data).join('')
     sendGuess(number)
+    formReset()
   }
   const formNumber = (() => Object.values(formGetValues()).join(''))()
   const isFormNumberUsedBefore = (() => {
     console.log('isFormNumberUsedBefore', formNumber, playerGuesses)
-    return playerGuesses.filter(({number}) => number == formNumber).length > 0
+    return playerGuesses.filter(({ number }) => number == formNumber).length > 0
   })()
 
   return (
     <StyledPageContainer>
       <StyledHeaderContainer>
         <ImpLogo size="sm" />
-        <div style={{flexGrow: '2'}}>
+        <div style={{ flexGrow: '2' }}>
           <Typography variant="h2">Game</Typography>
         </div>
         <Help />
@@ -133,7 +136,7 @@ const Game: React.FC = () => {
         />
       </StyledHeaderContainer>
       <StyledContentContainer>
-        <StyledGuessHeader container style={{textAlign: 'center'}}>
+        <StyledGuessHeader container style={{ textAlign: 'center' }}>
           <StyledGuessHeaderLeft item xs={6}><b>Your guesses</b></StyledGuessHeaderLeft>
           <StyledGuessHeaderRight item xs={6}>Opponents guesses</StyledGuessHeaderRight>
         </StyledGuessHeader>
@@ -148,6 +151,7 @@ const Game: React.FC = () => {
             isWin={playerWon}
             isTie={playerWon && opponentWon}
             highlightedNumber={isFormNumberUsedBefore ? formNumber : undefined}
+            pendingGuess={pendingGuess}
           />
           <GuessNumbers
             guessListA={playerGuesses}

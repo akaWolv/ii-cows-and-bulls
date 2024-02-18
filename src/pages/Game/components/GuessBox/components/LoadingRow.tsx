@@ -9,24 +9,31 @@ import {
   StyledFunctionalRow,
 } from './LoadingRow.styled.tsx';
 
+import { Guess } from 'types/CommonTypes.ts'
+
 type Props = {
   isGuessingTime?: boolean
   isNumberPicked?: boolean
+  pendingGuess?: Guess
 }
 
-const LoadingRow: React.FC<Props> = ({ isGuessingTime = false, isNumberPicked = false }) => {
+const LoadingRow: React.FC<Props> = ({ isGuessingTime = false, isNumberPicked = false, pendingGuess = {} }) => {
   if (!isGuessingTime) {
     return null
   }
+
+  const { number: pendingNumber } = pendingGuess
 
   const animation = isNumberPicked ? 'wave' : false
   return (
     <StyledFunctionalRow>
       <StyledGuessNumber>
         {
-          isNumberPicked
-            ? <CheckIcon fontSize="small" sx={{ color: 'grey.500' }} />
-            : <Skeleton animation="pulse" width={40} height={30} />
+          !isNumberPicked
+            ? <Skeleton animation="pulse" width={40} height={30} />
+            : pendingNumber
+              ? pendingNumber
+              : <CheckIcon fontSize="small" sx={{ color: 'grey.500' }} />
         }
       </StyledGuessNumber>
       <StyledAnswerContainer>
