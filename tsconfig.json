@@ -29,7 +29,6 @@
 
     /* Path mapping */
     "paths": {
-      "assets/*": ["./src/assets/*"],
       "common/*": ["./src/common/*"],
       "components/*": ["./src/components/*"],
       "constants/*": ["./src/constants/*"],

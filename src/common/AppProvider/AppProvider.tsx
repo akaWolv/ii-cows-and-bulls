@@ -1,6 +1,6 @@
 import { ReactElement, ReactNode } from 'react'
 import { ThemeProvider as MaterialThemeProvider } from '@mui/material'
-import theme from 'helpers/materialTheme'
+import theme from 'common/materialTheme.ts'
 import SocketContext, {socket} from 'context/SocketContext'
 import Growler from 'components/Alert';
 

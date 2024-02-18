@@ -5,6 +5,9 @@ import * as core from 'express-serve-static-core';
 import { MSG_CONNECT_TO_GAME_BY_CODES, MSG_GUESS, MSG_QUIT_GAME, MSG_SET_NUMBER_FOR_USER_IN_GAME } from 'constants/SocketMessages.ts';
 import messageHandler from 'server/messageHandler.ts';
 import { connectToGameByCodesMsg, guessMsg, setNumberForUserInGameMsg } from 'types/SocketMessages.ts';
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 type Params = {
   app: core.Express
@@ -12,10 +15,19 @@ type Params = {
 
 const createSocketIoServer = ({app}: Params) => {
   const httpServer = http.createServer(app)
-  const io = new ServerIO(httpServer)
+  const io = new ServerIO(httpServer, {
+    cors: {
+      origin: ["https://admin.socket.io"],
+      credentials: true
+    }
+  })
 
   instrument(io, {
-    auth: false,
+    auth: {
+      type: "basic",
+      username: "admin",
+      password: process.env.ADMIN_IO_PASSWORD || 'zxc' // FranekMajeranek@50
+    },
     mode: "development" // "production"
   })
 
