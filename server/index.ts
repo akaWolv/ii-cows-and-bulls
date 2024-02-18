@@ -3,12 +3,10 @@ import dotenv from 'dotenv'
 import createServer from 'server/createServer.ts'
 import createSocketIoServer from 'server/createSocketIoServer.ts';
 
-
 dotenv.config()
 
 const APP_URL = process.env.APP_URL || 'http://localhost:3001'
 const APP_PORT = process.env.APP_PORT || '3001'
-// const __dirname = path.dirname(fileURLToPath(import.meta.url))
 
 void createServer()
   .then(createSocketIoServer)
