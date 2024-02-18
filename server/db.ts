@@ -29,7 +29,7 @@ const NUMBER_OF_PLAYERS = 2
 const cache = flatCache.load('2024', resolve('./.cache'));
 const STORE: Store = cache.getKey('games') || {games: []}
 setInterval(() => {
-  console.log('saved', STORE)
+  // console.log('saved', STORE)
   cache.setKey('games', STORE);
   cache.save(true)
 }, 10 * 1000)
@@ -37,7 +37,7 @@ setInterval(() => {
 const dbHandler = () => {
   const createGame = (): Game => {
     const code = generateRandomKey()
-    console.log('createGame', code)
+    // console.log('createGame', code)
     const newRoom = {code, users: []}
     STORE.games.push(newRoom)
     return newRoom
@@ -54,7 +54,7 @@ const dbHandler = () => {
     }
   }
   const getGameByCode = (code: GameCode): Game | undefined => {
-    console.log('getGameByCode', code)
+    // console.log('getGameByCode', code)
     return STORE.games.find(({code: storedCode}) => storedCode === code)
   }
   const registerUserToGame = ({socketId, gameCode, userCode}: registerUserToRoom): UserAndGameData => {
@@ -69,7 +69,7 @@ const dbHandler = () => {
         }
       } else {
         const disconnectedUsers = game.users.filter(({status}) => status === UserStatus.DISCONNECTED)
-        console.log(disconnectedUsers)
+        // console.log(disconnectedUsers)
         if (disconnectedUsers.length == 1) {
           const userToReplace = disconnectedUsers[0]
           userToReplace.id = socketId
