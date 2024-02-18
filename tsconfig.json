@@ -23,7 +23,6 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
 
-
 //    "target": "ESNext",
 //    "lib": ["DOM", "DOM.Iterable", "ESNext"],
 //    "moduleResolution": incremental"Node",

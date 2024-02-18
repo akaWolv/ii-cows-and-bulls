@@ -1,16 +1,12 @@
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import cors from 'cors';
+import { apiGetAll } from './api/admin';
 
 const createServer = async () => {
   const app = express()
 
-  // app.get("/api/v1", (req, res) => {
-  //   res.json({
-  //     project: "React and Express Boilerplate",
-  //     from: "Vanaldito",
-  //   });
-  // });
+  app.get("/api/admin/getall", apiGetAll);
 
   // Create Vite server in middleware mode and configure the app type as
   // 'custom', disabling Vite's own HTML serving logic so parent server

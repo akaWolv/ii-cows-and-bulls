@@ -8,6 +8,7 @@ const Colors = {
   IMP_LIGHT_GREY: '#2B2B2B',
   IMP_DARK_GREY: '#111111',
   IMP_GREEN_WIN: '#72a916',
+  IMP_LIGHT_GREEN: '#97dd19',
   IMP_RED_BAD: '#ec4343',
 }
 

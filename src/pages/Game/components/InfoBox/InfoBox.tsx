@@ -1,66 +1,58 @@
 import React from 'react';
-import CheckCircleTwoToneIcon from '@mui/icons-material/CheckCircleTwoTone';
-import RadioButtonUncheckedOutlinedIcon from '@mui/icons-material/RadioButtonUncheckedOutlined';
-import {
-  StyledInfoBox,
-  RichContentContainer,
-  RichContentSection,
-} from './InfoBox.styled.tsx';
+import { StyledAlert } from './InfoBox.styled.tsx';
+import { AlertColor } from '@mui/material/Alert/Alert'
 
 type Props = {
-  isGuessingTime: boolean
+  isGameActive: boolean
   isNumberPicked: boolean
   didOpponentPickedNumber: boolean
   isGameEnded: boolean
   playerWon: boolean
   opponentWon: boolean
+  warning: string | boolean
 }
 
 const InfoBox: React.FC<Props> = (
   {
-    isGuessingTime = false,
+    isGameActive = false,
     isNumberPicked = false,
     didOpponentPickedNumber = false,
     isGameEnded = false,
     playerWon = false,
-    opponentWon = false
+    opponentWon = false,
+    warning = false
   }
 ) => {
-  const getText = () => {
+  const getData = (): [AlertColor, string|React.JSX.Element] => {
     switch (true) {
+      case Boolean(warning):
+        return ['error', String(warning)]
       case isGameEnded && playerWon && opponentWon:
-        return <>Game Over: <b>TIE!</b></>
+        return ['success', <>Game Over: <b>DRAW!</b></>]
       case isGameEnded && playerWon:
-        return <>Game Over: <b>You won!</b></>
+        return ['success', <>Game Over: <b>You won!</b></>]
       case isGameEnded && opponentWon:
-        return <>Game Over: <i>need to be faster next time!</i></>
+        return ['warning', <>Game Over: <i>You need to be faster next time.</i></>]
       case isGameEnded:
-        return <>Game Over: <i>not concluded...</i></>
-      case isGuessingTime && !isNumberPicked:
-        return 'Pick a number you want to guess'
-      case isGuessingTime && !didOpponentPickedNumber:
-        return 'Wait for you opponent to guess...'
-      case isGuessingTime:
-        return 'Both players picked numbers'
-      case !isGuessingTime:
-        return (
-          <RichContentContainer>
-            Digits found in:
-            <RichContentSection>
-              <RadioButtonUncheckedOutlinedIcon fontSize="small" style={{ opacity: 0.6 }} />&nbsp;incorrect spot,
-            </RichContentSection>
-            <RichContentSection>
-              <CheckCircleTwoToneIcon fontSize="small" style={{ opacity: 0.6 }} />&nbsp;right spot
-            </RichContentSection>
-          </RichContentContainer>
-        )
+        return ['warning', <>Game Over: <i>not resolved...</i></>]
+      case isGameActive && !isNumberPicked && didOpponentPickedNumber:
+        return ['info', 'Pick a number to guess... Opponent is waiting.']
+      case isGameActive && !isNumberPicked:
+        return ['info', 'Pick a number to guess']
+      case isGameActive && !didOpponentPickedNumber:
+        return ['success', 'Now wait for opponent to guess...']
+      case isGameActive:
+        return ['success', 'Both players picked numbers']
+      case !isGameActive:
+        return ['error', <>Game suspended - <b>all players not connected!</b></>]
       default:
-        return 'Think about possible opponents number'
+        return ['info', 'Think about possible opponents number']
     }
   }
 
+  const [severity, text] = getData()
 
-  return <StyledInfoBox elevation={1}>{getText()}</StyledInfoBox>
+  return <StyledAlert severity={severity}>{text}</StyledAlert>
 }
 
 export default InfoBox

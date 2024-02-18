@@ -12,6 +12,9 @@ export {
   StyledHeaderTypographyText,
 } from '../components.styled.tsx';
 
+const StyledAnswerRowsContainer = styled.div`
+  width: 138px;
+`
 const StyledHr = styled.hr`
   width: 95%;
   margin: 0;
@@ -28,8 +31,11 @@ const StyledResultBox = styled.div<{
   justify-content: space-evenly; 
   align-items: flex-start; 
   color: ${({$isWin}) => $isWin ? Colors.IMP_GREEN_WIN : Colors.IMP_RED_BAD};
+  font-weight: 300 !important;
+  margin-top: 5px;
 `
 export {
   StyledHr,
   StyledResultBox,
+  StyledAnswerRowsContainer,
 }

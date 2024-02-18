@@ -1,21 +1,22 @@
 import React from 'react';
 
 import Colors from 'constants/Colors.ts';
-import { GuessList } from 'types/Guess.ts';
 
-// noinspection ES6PreferShortImport
 import {
   StyledContainer,
   StyledBox,
   StyledRow,
   StyledHeader,
   StyledHeaderTypographyText,
-  StyledFunctionalRow
+  StyledFunctionalRow,
+  StyledNumberRowIcon
 } from './GuessOrderNumbers.styled.tsx';
+import { Guess } from 'types/CommonTypes.ts';
+import { Tooltip } from '@mui/material';
 
 type Props = {
-  guessListA: GuessList
-  guessListB: GuessList
+  guessListA: Guess[]
+  guessListB: Guess[]
   displayNextRow: boolean
   displayEmptyRow: boolean
 }
@@ -33,19 +34,19 @@ const GuessOrderNumbers: React.FC<Props> = (
 
   return (
     <StyledContainer>
-      <StyledBox elevation={3} $background="primary" style={{backgroundColor: `${Colors.IMP_DARK_GREY} !important`}}>
+      <StyledBox elevation={1} $background="primary" style={{backgroundColor: `${Colors.IMP_DARK_GREY} !important`}}>
 
         <StyledHeader>
-          <StyledHeaderTypographyText variant="h6">#</StyledHeaderTypographyText>
+          <StyledHeaderTypographyText variant="h6">
+            <Tooltip title={'Round number'}>
+              <StyledNumberRowIcon />
+            </Tooltip>
+          </StyledHeaderTypographyText>
         </StyledHeader>
 
         <hr style={{width: '95%', margin: 0, border: 'none', height: 1, backgroundColor: Colors.IMP_DARK_GREY}}/>
 
-        {
-          displayEmptyRow && (
-            <StyledFunctionalRow />
-          )
-        }
+        { displayEmptyRow && <StyledFunctionalRow /> }
 
         {
           displayNextRow && (
