@@ -6,7 +6,7 @@ import {
   Guess,
   SocketId,
   Store,
-  User,
+  User, UserAndGameData,
   UserCode,
   UserGameNumber,
 } from 'types/CommonTypes'
@@ -15,8 +15,8 @@ import { Md5 } from 'ts-md5'
 import { resolve } from 'path'
 import { generateRandomKey } from 'helpers';
 
-type UserAndGameData = { user?: User, game?: Game }
-export type registerUserToRoom = { socketId: SocketId, gameCode?: GameCode, userCode?: UserCode }
+// export type UserAndGameData = { user?: User, game?: Game }
+type registerUserToRoom = { socketId: SocketId, gameCode?: GameCode, userCode?: UserCode }
 
 const NUMBER_OF_PLAYERS = 2
 

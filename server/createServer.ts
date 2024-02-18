@@ -1,7 +1,7 @@
 import express from 'express';
 import { createServer as createViteServer } from 'vite';
 import cors from 'cors';
-import { apiGetAll } from './api/admin';
+import { apiGetAll } from 'server/api/admin';
 
 const createServer = async () => {
   const app = express()

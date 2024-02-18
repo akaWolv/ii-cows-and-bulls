@@ -8,37 +8,8 @@
     "module": "commonjs",
     "esModuleInterop": true,
 
-//    "composite": true,
-//    "skipLibCheck": true,
-//    "allowSyntheticDefaultImports": true
+    "composite": true,
+    "noEmit": false,
   },
   "include": ["vite.config.ts"]
 }
-
-//{
-//  "ts-node": {
-//    "require": ["tsconfig-paths/register"]
-//  },
-//  "compilerOptions": {
-//    "moduleResolution": "node",
-//    "module": "commonjs",
-//
-//    "baseUrl": "./src/",
-//    "target": "ES2020",
-////    "useDefineForClassFields": true,
-////    "lib": ["esnext"],
-//    "allowImportingTsExtensions": true,
-//    "noEmit": false,
-//
-//    "skipLibCheck": true,
-//    "allowJs": true,
-//    "resolveJsonModule": true,
-//    "esModuleInterop": true,
-//    "outDir": "./build",
-//
-//    "composite": true,
-//    "allowSyntheticDefaultImports": true,
-//  },
-//  "include": ["vite.config.ts"],
-//  "exclude": ["node_modules"]
-//}

@@ -41,3 +41,4 @@ export type FormValues = {
   digitC: string
   digitD: string
 };
+export type UserAndGameData = { user?: User, game?: Game }

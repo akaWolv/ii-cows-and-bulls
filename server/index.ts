@@ -1,6 +1,6 @@
 import dotenv from 'dotenv'
 
-import createServer from 'server/createServer.ts';
+import createServer from 'server/createServer.ts'
 import createSocketIoServer from 'server/createSocketIoServer.ts';
 
 

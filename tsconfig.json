@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
-    "baseUrl": "./src/",
+    "baseUrl": "./",
+    "rootDirs": ["./src", "./server"],
     "target": "ES2020",
     "useDefineForClassFields": true,
     "lib": ["ES2020", "DOM", "DOM.Iterable"],
@@ -9,7 +10,6 @@
 
     /* Bundler mode */
     "moduleResolution": "node",
-//    "moduleResolution": "Node",
     "allowImportingTsExtensions": true,
     "resolveJsonModule": true,
     "isolatedModules": true,
@@ -23,12 +23,23 @@
     "noFallthroughCasesInSwitch": true,
     "allowSyntheticDefaultImports": true,
 
-//    "target": "ESNext",
-//    "lib": ["DOM", "DOM.Iterable", "ESNext"],
-//    "moduleResolution": incremental"Node",
     "allowJs": false,
     "esModuleInterop": false,
     "forceConsistentCasingInFileNames": true,
+
+    /* Path mapping */
+    "paths": {
+      "assets/*": ["./src/assets/*"],
+      "common/*": ["./src/common/*"],
+      "components/*": ["./src/components/*"],
+      "constants/*": ["./src/constants/*"],
+      "context/*": ["./src/context/*"],
+      "controllers/*": ["./src/controllers/*"],
+      "helpers/*": ["./src/helpers/*"],
+      "helpers": ["./src/helpers/index"],
+      "pages/*": ["./src/pages/*"],
+      "types/*": ["./src/types/*"],
+    }
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules"],

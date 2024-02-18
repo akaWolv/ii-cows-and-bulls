@@ -3,20 +3,30 @@ import { Avatar, Card, CardActions, CardContent, Chip, Paper, Tooltip, Typograph
 import StarIcon from '@mui/icons-material/Star';
 import VpnKeyIcon from '@mui/icons-material/VpnKey';
 import NumbersIcon from '@mui/icons-material/Numbers';
+import { useSearchParams } from 'react-router-dom'
 
 import { Game, Store, User } from 'types/CommonTypes.ts'
 import Colors from 'constants/Colors.ts'
 import { UserStatus } from 'constants/UserStatus.ts'
 
 const Admin: React.FC = () => {
+  const [searchParams] = useSearchParams();
+  const key = searchParams.get("key")
   const [data, setData] = useState<undefined | Store>(undefined);
 
   useEffect(() => {
-    fetch('/api/admin/getall?key=3e127d616722284215dd9302cec78d01')
-      .then(response => response.json())
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      .then(json => setData(json))
-      .catch(error => console.error(error));
+    fetch(`/api/admin/getall`, { headers: { Authorization: String(key) }})
+      .then(response => {
+        if (response.status!==200)
+        {
+          throw new Error(`API has responded with status: ${String(response.status)}`)
+        }
+        return response.json()
+      })
+      .then(json => setData(json as Store))
+      .catch(error => {
+        console.error(error);
+      });
   }, []);
 
   const { games } = data || {}
@@ -55,7 +65,12 @@ const Admin: React.FC = () => {
           <Typography variant="subtitle2">
             {
               guesses
-                .map(({ number, cows, bulls }) => <><Tooltip title={`Cows: ${cows}, Bulls: ${bulls}`}><span>{number}</span></Tooltip>, </>)
+                .map(({ number, cows, bulls }) => (
+                    <React.Fragment key={number}>
+                      <Tooltip title={`Cows: ${cows}, Bulls: ${bulls}`}><span>{number}</span></Tooltip>{', '}
+                    </React.Fragment>
+                  )
+                )
             }
           </Typography>
         </CardContent>
@@ -73,7 +88,6 @@ const Admin: React.FC = () => {
       </Paper>
     )
   }
-
   const renderGame = ({ code, users }: Game) => {
     return (
       <Paper key={code}>
@@ -90,6 +104,10 @@ const Admin: React.FC = () => {
         </div>
       </Paper>
     )
+  }
+
+  if (!data) {
+    return <center>Loading...</center>
   }
 
   return (
