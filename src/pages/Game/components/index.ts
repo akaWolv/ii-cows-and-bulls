@@ -1,0 +1,5 @@
+export { default as GuessBox } from './GuessBox/GuessBox'
+export { default as GuessNumbers } from './GuessOrderNumbers/GuessOrderNumbers'
+export { default as InfoBox } from './InfoBox/InfoBox'
+export { default as Help } from './Help/Help'
+export { default as GameMenu } from './GameMenu/GameMenu'

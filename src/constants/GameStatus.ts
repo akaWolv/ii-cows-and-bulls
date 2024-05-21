@@ -1,0 +1,8 @@
+export enum GameStatus {
+  NOT_EXIST = 'NOT_EXIST',
+  PREPARE = 'PREPARE',
+  JOINING = 'JOINING',
+  PLAYING = 'PLAYING',
+  SUSPENDED = 'SUSPENDED',
+  CONCLUDED = 'CONCLUDED',
+}

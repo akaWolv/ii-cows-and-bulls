@@ -1,0 +1,30 @@
+{
+  "extends": "./tsconfig.json",
+  "ts-node": {
+    "require": ["tsconfig-paths/register"]
+  },
+  "compilerOptions": {
+    "moduleResolution": "node",
+    "module": "commonjs",
+    "esModuleInterop": true,
+
+    "composite": true,
+    "noEmit": false,
+//    "skipLibCheck": true,
+//    "allowSyntheticDefaultImports": true
+  },
+  "include": ["vite.config.ts"],
+  "exclude": [
+    "src/common",
+    "src/components",
+    "src/context",
+    "src/controllers",
+    "src/helpers",
+    "src/pages",
+    "src/App.tsx",
+    "src/index.css",
+    "src/indieimp.svg",
+    "src/main.tsx",
+    "src/vite-env.d.ts"
+  ]
+}
